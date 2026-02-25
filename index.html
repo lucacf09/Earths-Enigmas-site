@@ -541,6 +541,25 @@ Do not respond to familiar voices in darkness.
 END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
+    const NEMO_PREVIEW_TEXT = `Project NEMO – Experimental Adaptation Initiative
+Creature File: NEMO_03
+Classification: Adaptive Mimetic Organism
+Status: ██████
+Threat Level: ██████
+
+I. Overview
+NEMO_03 is the third biological construct developed under Project NEMO…
+[REDACTED: CLEARANCE 3 REQUIRED]
+
+II. Notes
+• Audio mimicry confirmed
+• Visual replication reported
+• Containment history: ███████████
+• Last verified location: ███████████
+
+ENTER DECRYPTION KEY TO ACCESS FULL FILE.`;
+
+const NEMO_KEY = "EEC-3A"; // change to whatever you want
 
     // =============================
     // HELPERS
@@ -634,6 +653,27 @@ Restricted Archive Division`;
       const overlay = document.getElementById("fileModal");
       overlay.setAttribute("aria-hidden","true");
     }
+    function openEncryptedNemoFile(){
+  // show preview first
+  openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT);
+
+  // small delay so the modal is visibly open before prompt
+  setTimeout(() => {
+    const key = prompt("DECRYPTION KEY REQUIRED:");
+    if (key === null) return; // user cancelled
+
+    if (key.trim() === NEMO_KEY){
+      openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
+    } else {
+      openFileModal("NEMO_03 · ACCESS DENIED", [
+        "CLEARANCE: FAILED",
+        "KEY STATUS: INVALID",
+        "NOTICE:",
+        "  Repeated attempts will be logged.",
+      ].join("\n"));
+    }
+  }, 80);
+}
 
     // =============================
     // BUILD EVENT LOG DOM (so we can type in order)
@@ -727,7 +767,7 @@ Restricted Archive Division`;
 
         li.addEventListener("click", () => {
           if (isNemo){
-            openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_FILE_TEXT);
+            openEncryptedNemoFile();
           } else {
             openFileModal(`${e.id} · DATA CORRUPTED`, [
               "CLEARANCE: INSUFFICIENT",
