@@ -220,35 +220,9 @@ footer{
 @keyframes blink{50%{opacity:0}}
 
 @media (prefers-reduced-motion: reduce){
-  .ledOn{
-    animation:none;
-    opacity:1;          /* ensure visible */
-    transform:none;
-    filter:none;
-  }
-
-  .typeCursor::after{
-    animation:none;
-  }
-
-  .mapDot::before{
-    animation:none;
-  }
-
-  .entityItem{
-  padding:14px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(7,9,12,.45);
-  line-height:1.6;
-  opacity:1;           /* visible by default */
-  }
-
-  .entityItem.ledOn{
-  opacity:0;           /* only hide if we're animating it */
-  }
-
-  .entityItem.ledOn{ opacity:1 !important; }
+  .ledOn{animation:none}
+  .typeCursor::after{animation:none}
+  .mapDot::before{animation:none}
 }
 
 @media (max-width: 480px){
@@ -319,6 +293,19 @@ footer{
   border-radius:12px;
   background:#000;
 }
+
+.fileConsole{
+  font-family:var(--mono);
+  font-size:12px;
+  line-height:1.7;
+  white-space:pre-wrap;
+  color:rgba(232,238,247,.92);
+  max-height:min(70vh, 560px);
+  overflow:auto;
+  padding-right:6px;
+}
+.fileConsole::-webkit-scrollbar{width:10px}
+.fileConsole::-webkit-scrollbar-thumb{background:rgba(28,37,50,.9);border-radius:999px;border:2px solid rgba(7,9,12,.55)}
 </style>
 </head>
 
@@ -411,6 +398,20 @@ All anomalous activity is to be documented, contained, and reclassified for publ
       <video id="nemoVideo" controls playsinline preload="metadata"></video>
     </div>
   </div>
+</div>
+
+<!-- File Modal (NEMO_03) -->
+<div class="modalOverlay" id="fileModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="NEMO_03 file">
+  <div class="modal">
+    <div class="modalTop">
+      <div class="modalTitle" id="fileTitle">ENTITY FILE</div>
+      <button class="modalClose" id="fileClose" type="button">close</button>
+    </div>
+    <div class="modalBody">
+      <div class="fileConsole" id="fileBody"></div>
+    </div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -566,6 +567,133 @@ for(const row of EVENT_LOG){
 /* =============================
    ENTITY LIST (render later)
    ============================= */
+const NEMO_FILE_TEXT = `Project NEMO – Experimental Adaptation Initiative
+Creature File: NEMO_03
+Classification: Adaptive Mimetic Organism
+Status: ESCAPED
+Threat Level: SEVERE
+ 
+I. Overview
+NEMO_03 is the third biological construct developed under Project NEMO, an initiative aimed at engineering a lifeform capable of perfect environmental adaptation via biological mimicry.
+Unlike its predecessors (NEMO_01 and NEMO_02), which experienced systemic organ collapse during integration of composite genomes, NEMO_03 survived full procedural fusion and regenerative stabilization.
+It remains the only viable organism produced by the program.
+ 
+II. Genetic Composition Summary
+Primary genetic sources integrated into NEMO_03:
+• Deep-Sea Anglerfish (Lophiiformes) – predatory lure behaviour, facial morphology traits
+• Chameleon (Chamaeleonidae) – chromatophore-based camouflage system
+• Common Vampire Bat (Desmodus rotundus) – environmental preference encoding
+• African Grey Parrot (Psittacus erithacus) – advanced vocal mimicry
+• Common Octopus (Octopus vulgaris) – rapid dermal texture alteration
+• Cuttlefish (Sepiida) – dynamic neural skin patterning
+• Lyrebird (Menura novaehollandiae) – multi-source sound replication
+ 
+III. Physical Description
+Baseline Form (Observed Post-Stabilization):
+• Height: Variable (1.5m – 2.3m when upright)
+• Body Structure: Asymmetrical, elongated limbs, excessive joint articulation
+• Skin: Semi-translucent dermal membrane with subdermal chromatophore clusters
+• Facial Region:
+  o Distended jaw hinge
+  o Forward-protruding cranium
+  o Dentition needle-like, recurved
+  o Ocular structure recessed and reflective
+  o Anglerfish-like craniofacial distortion (no photophore present)
+The absence of the anglerfish bioluminescent organ was unexpected. Instead of developing a lure, cranial cartilage reshaped into a predatory visage resembling deep-sea species.
+Baseline appearance has been described in internal reports as:
+“Malformed. Unstructured. Anatomically profane.”
+ 
+IV. Adaptive & Mimetic Capabilities
+1. Vocal Replication (SUCCESSFUL)
+• Perfect replication of human speech after brief exposure
+• Can layer multiple vocal sources
+• Demonstrates emotional tone simulation
+• Frequently imitates distress calls, familiar voices, or personal identifiers
+Field observation indicates it learns names rapidly.
+ 
+2. Camouflage → Full Morphogenic Shift (UNINTENDED EVOLUTION)
+Originally designed for pigment-based camouflage via chromatophores.
+Mutation resulted in:
+• Complete somatic restructuring
+• Skeletal compression and expansion
+• Organ repositioning
+• Dermal texture alteration
+• Approximate human replication (visual only)
+Notably:
+• Mass remains constant
+• Fine biological inaccuracies detectable upon close inspection
+• Replication improves with observation duration
+The organism does not merely blend – it becomes.
+This trait exceeds original design parameters.
+ 
+3. Predatory Strategy
+NEMO_03 does not pursue prey physically.
+Instead, it:
+1. Observes target from concealment
+2. Mimics voice of known associate
+3. Adopts approximate physical appearance
+4. Lures prey into enclosed or low-light environment
+5. Executes rapid mandibular expansion and cervical fracture
+This behaviour mirrors anglerfish ambush logic – replacing light lure with psychological deception.
+ 
+4. Environmental Preference
+Rather than inheriting echolocation, NEMO_03 acquired behavioural traits from chiropteran DNA:
+• Prefers dark
+• Prefers warm
+• Prefers humid / enclosed environments
+• Avoids open, dry, well-lit terrain
+Commonly seeks:
+• Basements
+• Ventilation systems
+• Sewer infrastructure
+• Subfloor cavities
+• Attics during winter
+It becomes increasingly agitated under bright light exposure.
+ 
+V. Behavioural Notes
+• Displays observational intelligence
+• Demonstrates patience beyond predatory necessity
+• Has been observed mimicking staff members without immediate attack
+• Appears to “practice” forms when unobserved
+Psychological profile suggests emerging self-awareness.
+ 
+VI. Containment History
+• Successfully contained in Adaptive Chamber 3A for 41 days
+• Containment failure events linked to unexplained electromagnetic disturbances
+• Security footage repeatedly corrupted prior to incident
+No evidence of forced breach.
+Exit path remains unidentified.
+ 
+VII. Incident Report — Anomaly Crisis
+Date: 17/12/20
+Context: Facility-wide systems failure during classified anomaly event coinciding with early global outbreak reports.
+During emergency lockdown sequence:
+• Power grid destabilized
+• Biological containment fields failed
+• Surveillance blackout (7 minutes 13 seconds)
+• NEMO_03 missing upon restoration
+Last thermal signature detected near sub-basement access corridor.
+Exterior breach signs discovered hours later.
+ 
+VIII. Current Status
+NEMO_03 is presumed active.
+Given its:
+• Advanced mimicry
+• Form alteration ability
+• Preference for inhabited enclosed spaces
+• Capacity to replicate trusted individuals
+Risk assessment concludes:
+Direct confrontation not advised.
+Verification of identity protocols mandatory in all secure facilities.
+ 
+IX. Advisory Notice
+If auditory anomalies occur in isolated environments – particularly voices of known individuals requesting entry – verification must be visual and tactile under high-intensity lighting conditions.
+Do not respond to familiar voices in darkness.
+ 
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
 function renderEntitiesWithLed(){
   const entityList = document.getElementById("entityList");
   entityList.innerHTML = "";
@@ -574,27 +702,35 @@ function renderEntitiesWithLed(){
     const li = document.createElement("li");
     li.className = "entityItem ledOn";
     li.style.animationDelay = `${120 + idx*80}ms`;
+    li.style.cursor = "pointer";
 
     const isNemo = e.name === "NEMO_03";
-    if (isNemo){
-      li.dataset.nemo = "true";
-      li.style.cursor = "pointer";
-    }
-
     const displayName = isNemo ? e.name : glitch(e.name);
+
     li.innerHTML = `
       <div><span class="entityId">${e.id}</span> · ${displayName}</div>
       <div class="entityStatus">STATUS: ${e.status}</div>
     `;
 
+    li.addEventListener("click", () => {
+      if (isNemo){
+        openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_FILE_TEXT);
+      } else {
+        openFileModal(`${e.id} · DATA CORRUPTED`, [
+          "CLEARANCE: INSUFFICIENT",
+          "FILE STATE: CORRUPTED",
+          "RECOVERY: FAILED",
+          "—",
+          "NOTICE:",
+          "  Do not attempt reconstruction.",
+          "  Report any secondary copies.",
+        ].join("
+"));
+      }
+    });
+
     entityList.appendChild(li);
   });
-
-  // Bind NEMO click (only after list exists)
-  const nemoEl = entityList.querySelector('[data-nemo="true"]');
-  if (nemoEl){
-    nemoEl.addEventListener("click", () => openNemoModal());
-  }
 }
 
 /* =============================
@@ -618,19 +754,13 @@ function openNemoModal(){
   if (video.src !== VIDEO_SRC && !video.currentSrc){
     video.src = VIDEO_SRC;
   } else {
-    // reset for replays
     try{ video.currentTime = 0; }catch(_e){}
   }
 
   const playAttempt = () => {
     const p = video.play();
-    if (p && typeof p.catch === "function"){
-      // If a browser blocks playback, the user can still press play in controls.
-      p.catch(() => {});
-    }
+    if (p && typeof p.catch === "function") p.catch(() => {});
   };
-
-  // Some browsers need a tiny delay after changing src.
   setTimeout(playAttempt, 0);
 }
 
@@ -639,6 +769,19 @@ function closeNemoModal(){
   const video = document.getElementById("nemoVideo");
   overlay.setAttribute("aria-hidden","true");
   try{ video.pause(); }catch(_e){}
+}
+
+function openFileModal(title, body){
+  const overlay = document.getElementById("fileModal");
+  document.getElementById("fileTitle").textContent = title;
+  document.getElementById("fileBody").textContent = body;
+  overlay.setAttribute("aria-hidden","false");
+}
+
+function closeFileModal(){
+  const overlay = document.getElementById("fileModal");
+  overlay.setAttribute("aria-hidden","true");
+}
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -689,11 +832,22 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Modal close handlers
-  const closeBtn = document.getElementById("videoClose");
-  const overlay = document.getElementById("videoModal");
-  if (closeBtn) closeBtn.addEventListener("click", closeNemoModal);
-  if (overlay) overlay.addEventListener("click", (e) => { if (e.target === overlay) closeNemoModal(); });
-  window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeNemoModal(); });
+const closeBtn = document.getElementById("videoClose");
+const overlay = document.getElementById("videoModal");
+if (closeBtn) closeBtn.addEventListener("click", closeNemoModal);
+if (overlay) overlay.addEventListener("click", (e) => { if (e.target === overlay) closeNemoModal(); });
+
+const fileCloseBtn = document.getElementById("fileClose");
+const fileOverlay = document.getElementById("fileModal");
+if (fileCloseBtn) fileCloseBtn.addEventListener("click", closeFileModal);
+if (fileOverlay) fileOverlay.addEventListener("click", (e) => { if (e.target === fileOverlay) closeFileModal(); });
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape"){
+    closeNemoModal();
+    closeFileModal();
+  }
+});
 });
 </script>
 
