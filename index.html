@@ -24,7 +24,7 @@
       backdrop-filter: blur(10px);
     }
         /* FILE MODAL ACTIONS */
-    .modalBody{position:relative;} /* needed for absolute positioning */
+    .modalBody{position:relative; padding:14px;} /* needed for absolute positioning */
     .fileActions{
       position:absolute;
       right:14px;
@@ -295,7 +295,6 @@
       cursor:pointer;
     }
     .modalClose:hover{border-color:rgba(116,211,255,.35)}
-    .modalBody{padding:14px}
 
     .modalBody video{width:100%;height:auto;display:block;border-radius:12px;background:#000}
 
@@ -741,37 +740,17 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       setFileActions({ showEnterKey:true });
     }
 
-  // Otherwise show preview + ask for key
-  openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT);
-
-  setTimeout(() => {
-    const key = prompt("DECRYPTION KEY REQUIRED:");
-    if (key === null) return;
-
-    if (key.trim() === NEMO_KEY){
-      localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
-      openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
-    } else {
-      openFileModal("NEMO_03 · ACCESS DENIED", [
-        "CLEARANCE: FAILED",
-        "KEY STATUS: INVALID",
+    function revealOperatorKey(){
+      openFileModal("SYSTEM CACHE RECOVERY", [
+        "LOCAL HEADER CACHE RESTORED",
+        "—",
+        "RECOVERED CREDENTIAL:",
+        "DECRYPTION KEY: " + NEMO_KEY,
+        "—",
         "NOTICE:",
-        "  Repeated attempts will be logged."
+        "  This action has been logged.",
       ].join("\n"));
     }
-  }, 80);
-}
-    function revealOperatorKey(){
-  openFileModal("SYSTEM CACHE RECOVERY", [
-    "LOCAL HEADER CACHE RESTORED",
-    "—",
-    "RECOVERED CREDENTIAL:",
-    "DECRYPTION KEY: " + NEMO_KEY,
-    "—",
-    "NOTICE:",
-    "  This action has been logged.",
-  ].join("\n"));
-}
 
     // =============================
     // BUILD EVENT LOG DOM (so we can type in order)
@@ -894,7 +873,6 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       if (skipBtn){
         skipBtn.addEventListener("click", () => {
           SKIP_BOOT = true;
-          revealAllInstant();
         });
       }
 
