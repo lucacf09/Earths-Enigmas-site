@@ -73,6 +73,10 @@
       font-family:var(--sans);
       letter-spacing:.2px;
     }
+    function hideSkipButton(){
+      const btn = document.getElementById("skipBootBtn");
+      if (btn) btn.style.display = "none";
+    }
 
     /* Prevent any pre-animation text from showing */
     .prehide{visibility:hidden}
@@ -935,6 +939,8 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
           closeNemoModal();
           closeFileModal();
         }
+        
+        hideSkipButton();
       });
       // Enter key button (inside file modal)
       const enterKeyBtn = document.getElementById("enterKeyBtn");
