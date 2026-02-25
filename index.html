@@ -229,6 +229,70 @@ footer{
   .mainLogo img{ height:180px; }
   .prodFooterLogo img{ height:90px; }
 }
+
+/* =============================
+   VIDEO MODAL
+   ============================= */
+.modalOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.72);
+  backdrop-filter: blur(10px);
+  z-index:9999;
+}
+.modalOverlay[aria-hidden="false"]{display:flex}
+
+.modal{
+  width:min(980px, 100%);
+  border-radius:18px;
+  border:1px solid rgba(28,37,50,.95);
+  background:linear-gradient(180deg, rgba(13,17,23,.96), rgba(10,14,19,.96));
+  box-shadow:0 30px 90px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.modalTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(28,37,50,.9);
+}
+
+.modalTitle{
+  font-family:var(--mono);
+  font-size:12px;
+  color:rgba(232,238,247,.92);
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+
+.modalClose{
+  font-family:var(--mono);
+  font-size:12px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(28,37,50,.95);
+  background: rgba(7,9,12,.55);
+  color:rgba(232,238,247,.92);
+  cursor:pointer;
+}
+.modalClose:hover{border-color:rgba(116,211,255,.35)}
+
+.modalBody{padding:14px}
+
+.modalBody video{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:12px;
+  background:#000;
+}
 </style>
 </head>
 
@@ -279,7 +343,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
           <img src="world-map.png" class="mapImage" alt="World map">
 
           <!-- 12 total dots (1 green in the UK) -->
-          <span class="mapDot dotGreen" data-name="NEMO_03" style="left:49.6%; top:23.5%;"></span>
+          <span class="mapDot dotGreen" id="nemoDot" data-name="NEMO_03" style="left:49.6%; top:23.5%;"></span>
 
           <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%;"></span>
           <span class="mapDot dotRed" data-name="██-014" style="left:30%; top:40%;"></span>
@@ -308,6 +372,20 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     <img id="logoProd" class="ledOn delay300" src="eec-logo2.png" alt="Production Studio Logo">
   </div>
 </footer>
+
+<!-- Video Modal (NEMO_03) -->
+<div class="modalOverlay" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="NEMO_03 transmission">
+  <div class="modal">
+    <div class="modalTop">
+      <div class="modalTitle">NEMO_03 · RECOVERED FOOTAGE</div>
+      <button class="modalClose" id="videoClose" type="button">close</button>
+    </div>
+    <div class="modalBody">
+      <!-- Put your video next to index.html and name it nemo.mp4 (or change VIDEO_SRC in the script). -->
+      <video id="nemoVideo" controls playsinline preload="metadata"></video>
+    </div>
+  </div>
+</div>
 
 <script>
 /* =============================
@@ -471,7 +549,13 @@ function renderEntitiesWithLed(){
     li.className = "entityItem ledOn";
     li.style.animationDelay = `${120 + idx*80}ms`;
 
-    const displayName = e.name === "NEMO_03" ? e.name : glitch(e.name);
+    const isNemo = e.name === "NEMO_03";
+    if (isNemo){
+      li.dataset.nemo = "true";
+      li.style.cursor = "pointer";
+    }
+
+    const displayName = isNemo ? e.name : glitch(e.name);
     li.innerHTML = `
       <div><span class="entityId">${e.id}</span> · ${displayName}</div>
       <div class="entityStatus">STATUS: ${e.status}</div>
@@ -479,11 +563,58 @@ function renderEntitiesWithLed(){
 
     entityList.appendChild(li);
   });
+
+  // Bind NEMO click (only after list exists)
+  const nemoEl = entityList.querySelector('[data-nemo="true"]');
+  if (nemoEl){
+    nemoEl.addEventListener("click", () => openNemoModal());
+  }
 }
 
 /* =============================
    BOOT SEQUENCE (order)
    ============================= */
+// =============================
+// VIDEO MODAL LOGIC
+// =============================
+const VIDEO_SRC = "nemo.mp4";
+
+function openNemoModal(){
+  const overlay = document.getElementById("videoModal");
+  const video = document.getElementById("nemoVideo");
+
+  overlay.setAttribute("aria-hidden","false");
+
+  // Ensure audio is allowed (this runs from a user click)
+  video.muted = false;
+  video.volume = 1;
+
+  if (video.src !== VIDEO_SRC && !video.currentSrc){
+    video.src = VIDEO_SRC;
+  } else {
+    // reset for replays
+    try{ video.currentTime = 0; }catch(_e){}
+  }
+
+  const playAttempt = () => {
+    const p = video.play();
+    if (p && typeof p.catch === "function"){
+      // If a browser blocks playback, the user can still press play in controls.
+      p.catch(() => {});
+    }
+  };
+
+  // Some browsers need a tiny delay after changing src.
+  setTimeout(playAttempt, 0);
+}
+
+function closeNemoModal(){
+  const overlay = document.getElementById("videoModal");
+  const video = document.getElementById("nemoVideo");
+  overlay.setAttribute("aria-hidden","true");
+  try{ video.pause(); }catch(_e){}
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   await sleep(220);
 
@@ -523,6 +654,20 @@ window.addEventListener("DOMContentLoaded", async () => {
   await typeFromData(mapTitle, 9);
   reveal(mapWrap);
   mapWrap.classList.add("ledOn");
+
+  // Map green dot click opens NEMO modal
+  const nemoDot = document.getElementById("nemoDot");
+  if (nemoDot){
+    nemoDot.style.cursor = "pointer";
+    nemoDot.addEventListener("click", () => openNemoModal());
+  }
+
+  // Modal close handlers
+  const closeBtn = document.getElementById("videoClose");
+  const overlay = document.getElementById("videoModal");
+  if (closeBtn) closeBtn.addEventListener("click", closeNemoModal);
+  if (overlay) overlay.addEventListener("click", (e) => { if (e.target === overlay) closeNemoModal(); });
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeNemoModal(); });
 });
 </script>
 
