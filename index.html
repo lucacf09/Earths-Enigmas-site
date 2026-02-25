@@ -25,23 +25,16 @@ body{
   font-family:system-ui, -apple-system, Segoe UI, Roboto;
 }
 
-/* Prevent any pre-animation text from showing */
-.prehide{ visibility:hidden; }
+.prehide{visibility:hidden}
 
-/* HEADER */
 header{
   padding:40px 28px 18px;
   border-bottom:1px solid var(--line);
   backdrop-filter:blur(8px);
 }
 
-.mainLogo{display:flex;justify-content:center;align-items:center}
-.mainLogo img{
-  height:240px;
-  width:auto;
-  object-fit:contain;
-  filter:drop-shadow(0 14px 40px rgba(0,0,0,.55));
-}
+.mainLogo{display:flex;justify-content:center}
+.mainLogo img{height:240px;filter:drop-shadow(0 14px 40px rgba(0,0,0,.55))}
 
 main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
 
@@ -53,85 +46,30 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
   margin-bottom:28px;
 }
 
-.title{
-  font-family:var(--mono);
-  font-size:12px;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-bottom:18px;
-}
-
-.console{
-  font-family:var(--mono);
-  font-size:12px;
-  line-height:1.7;
-  white-space:pre-wrap;
-}
-
+.title{font-family:var(--mono);font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.console{font-family:var(--mono);font-size:12px;line-height:1.7;white-space:pre-wrap}
 .notice{margin-top:18px;font-family:var(--mono);font-size:12px}
 .phone{margin-top:6px;color:var(--accent);letter-spacing:2px;font-family:var(--mono)}
 
-/* SPLIT LAYOUT */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 @media(max-width:900px){.split{grid-template-columns:1fr}}
-
-/* right column stack */
 .col{display:grid;gap:28px}
 
-/* EVENT LOG */
 .logList{font-family:var(--mono);font-size:12px;line-height:1.7}
-.logRow{margin-bottom:10px}
 .logDate{color:var(--accent)}
-.alertLine{margin-top:16px;color:#cfd9e6}
+.alertLine{margin-top:16px}
 
-/* ENTITY REGISTRY */
-.entityList{
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:grid;
-  gap:12px;
-  font-family:var(--mono);
-  font-size:13px;
-}
-.entityItem{
-  padding:14px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(7,9,12,.45);
-  line-height:1.6;
-  opacity:0; /* will fade in with LED */
-}
+.entityList{list-style:none;padding:0;margin:0;display:grid;gap:12px;font-family:var(--mono);font-size:13px}
+.entityItem{padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(7,9,12,.45);opacity:0}
 .entityId{color:var(--accent)}
 .entityStatus{color:var(--muted)}
 
 /* MAP */
-.mapWrap{
-  border:1px solid var(--line);
-  background:rgba(7,9,12,.45);
-  border-radius:14px;
-  padding:14px;
-}
 .mapContainer{position:relative;width:100%}
-.mapImage{
-  width:100%;
-  display:block;
-  opacity:.9;
-  filter:contrast(115%) brightness(85%);
-  border-radius:12px;
-}
+.mapImage{width:100%;display:block;opacity:.9;filter:contrast(115%) brightness(85%);border-radius:12px}
 
-.mapDot{
-  position:absolute;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-  cursor:pointer;
-}
+.mapDot{position:absolute;width:6px;height:6px;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer}
 
-/* create separate pulsing ring so text does not scale */
 .mapDot::before{
   content:"";
   position:absolute;
@@ -139,28 +77,15 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
   border-radius:50%;
   background:inherit;
   opacity:.6;
-  animation: dotPulse 2.2s ease-in-out infinite;
+  animation:dotPulse 2.2s ease-in-out infinite;
   z-index:-1;
 }
 
-.mapDot:hover::before{
-  animation-play-state: paused;
-}
+.mapDot:hover::before{animation-play-state:paused}
 
-/* stop pulsing while hovering (keeps tooltip readable) */
-.mapDot:hover{ animation-play-state: paused; }
+.dotRed{background:#ff2a2a;box-shadow:0 0 8px #ff2a2a}
+.dotGreen{background:#00ff5a;box-shadow:0 0 8px #00ff5a}
 
-.dotRed{
-  background:#ff2a2a;
-  box-shadow:0 0 8px #ff2a2a;
-}
-
-.dotGreen{
-  background:#00ff5a;
-  box-shadow:0 0 8px #00ff5a;
-}
-
-/* Tooltip */
 .mapDot::after{
   content:attr(data-name);
   position:absolute;
@@ -175,157 +100,91 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
   color:var(--accent);
   white-space:nowrap;
   opacity:0;
-  pointer-events:none;
   transition:opacity .15s ease;
 }
 
 .mapDot:hover::after{opacity:1}
 
 @keyframes dotPulse{
-  0%{transform:translate(-50%,-50%) scale(1);opacity:1}
-  50%{transform:translate(-50%,-50%) scale(1.8);opacity:.35}
-  100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  0%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.8);opacity:.35}
+  100%{transform:scale(1);opacity:1}
 }
 
-  50%{transform:translate(-50%,-50%) scale(1.6);opacity:.4}
-  100%{transform:translate(-50%,-50%) scale(1);opacity:.9}
-}
-
-/* FOOTER WITH PRODUCTION LOGO (BOTTOM RIGHT) */
+/* FOOTER */
 footer{
   position:relative;
   max-width:1200px;
   margin:0 auto;
   padding:40px 28px 60px;
+}
+
+.footerText{
   font-family:var(--mono);
   font-size:11px;
   color:var(--muted);
 }
-.prodFooterLogo{position:absolute;bottom:20px;right:28px;z-index:1}
-.prodFooterLogo img{
-  height:120px;
-  width:auto;
-  object-fit:contain;
-  filter:drop-shadow(0 10px 30px rgba(0,0,0,.5));
-}
 
-/* =============================
-   ANIMATIONS
-   ============================= */
-@keyframes ledFlicker {
-  0%   { opacity:0; filter:brightness(0) drop-shadow(0 0 0 rgba(0,0,0,0)); transform:translateY(-2px); }
-  6%   { opacity:1; filter:brightness(1.9) drop-shadow(0 0 16px rgba(116,211,255,.22)); }
-  10%  { opacity:.15; filter:brightness(.6); }
-  16%  { opacity:1; filter:brightness(2.2); }
-  22%  { opacity:.35; filter:brightness(.85); }
-  30%  { opacity:1; filter:brightness(1.4); }
-  100% { opacity:1; filter:brightness(1); transform:translateY(0); }
-}
+.prodFooterLogo{position:absolute;bottom:20px;right:28px}
+.prodFooterLogo img{height:120px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5))}
 
-.ledOn{ animation: ledFlicker 700ms ease-out both; }
-.delay150{animation-delay:150ms}
-.delay300{animation-delay:300ms}
-
-/* Typed cursor */
-.typeCursor::after{content:"▍";margin-left:2px;opacity:1;animation: blink 700ms steps(1,end) infinite}
-@keyframes blink{50%{opacity:0}}
-
-@media (prefers-reduced-motion: reduce){
-  .ledOn{animation:none}
-  .typeCursor::after{animation:none}
-  .mapDot{animation:none}
-}
-
-@media (max-width: 480px){
-  .mainLogo img{ height:180px; }
-  .prodFooterLogo img{ height:90px; }
+@media(max-width:480px){
+  .mainLogo img{height:180px}
+  .prodFooterLogo img{height:90px}
 }
 </style>
 </head>
-
 <body>
 
 <header>
   <div class="mainLogo">
-    <img id="logoEEC" class="ledOn" src="eec-logo.png" alt="Earth's Enigmas Co. Logo">
+    <img src="eec-logo.png" alt="Earth's Enigmas Co. Logo">
   </div>
 </header>
 
 <main>
 
-<!-- TOP PURPOSE BOX -->
-<div class="card">
-  <div class="title prehide" id="t_directive">Company Directive · 2021</div>
-  <div class="console prehide" id="t_console">
-Earth's Enigmas Co. operates as a global anomaly location and containment unit.
-
-Our objective is the identification, pursuit, and neutralization of emergent biological, atmospheric, and structural irregularities.
-
-All anomalous activity is to be documented, contained, and reclassified for public safety.
-  </div>
-  <div class="notice prehide" id="t_notice">Please report any anomalies found to the provided database.</div>
-  <div class="phone prehide" id="t_phone">—</div>
-</div>
-
 <div class="split">
 
-  <!-- LEFT: EVENT LOG -->
-  <div class="card">
-    <div class="title prehide" id="t_eventTitle">Event Log · 2021 Internal Monitoring</div>
-    <div class="logList prehide" id="eventLog" aria-label="Event log"></div>
+<div class="card">
+  <div class="title">Corrupted Entity Registry</div>
+  <ul class="entityList" id="entityList"></ul>
+</div>
+
+<div class="card">
+  <div class="title">Global Incident Map · 2021</div>
+  <div class="mapContainer">
+    <img src="world-map.png" class="mapImage" alt="World map">
+
+    <!-- CLEANED: Only 12 total dots -->
+    <span class="mapDot dotGreen" data-name="NEMO_03" style="left:49.6%; top:23.5%;"></span>
+
+    <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%;"></span>
+    <span class="mapDot dotRed" data-name="██-014" style="left:30%; top:40%;"></span>
+    <span class="mapDot dotRed" data-name="██-029" style="left:34%; top:66%;"></span>
+    <span class="mapDot dotRed" data-name="██-033" style="left:60%; top:64%;"></span>
+    <span class="mapDot dotRed" data-name="██-041" style="left:67%; top:69%;"></span>
+    <span class="mapDot dotRed" data-name="██-055" style="left:73%; top:43%;"></span>
+    <span class="mapDot dotRed" data-name="██-067" style="left:70%; top:55%;"></span>
+    <span class="mapDot dotRed" data-name="██-072" style="left:79%; top:55%;"></span>
+    <span class="mapDot dotRed" data-name="██-088" style="left:85%; top:49%;"></span>
+    <span class="mapDot dotRed" data-name="██-091" style="left:90%; top:52%;"></span>
+    <span class="mapDot dotRed" data-name="██-103" style="left:87%; top:79%;"></span>
   </div>
-
-  <!-- RIGHT: STACKED COLUMN -->
-  <div class="col">
-
-    <div class="card">
-      <div class="title prehide" id="t_registryTitle">Corrupted Entity Registry</div>
-      <ul class="entityList" id="entityList" aria-label="Entity registry"></ul>
-    </div>
-
-    <div class="card">
-      <div class="title prehide" id="t_mapTitle">Global Incident Map · 2021</div>
-      <div class="mapWrap prehide" id="mapWrap">
-        <div class="mapContainer" aria-label="Global incident map">
-          <!-- Put your map image next to index.html and name it world-map.png (or change the src below) -->
-          <img src="world-map.png" class="mapImage" alt="World map">
-
-          <!-- 12 pulsing dots (1 green in the UK) -->
-          <span class="mapDot dotGreen" data-name="NEMO_03" style="left:49.6%; top:23.5%; animation-delay:0ms"></span>
-
-          <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%; animation-delay:180ms"></span>
-          <span class="mapDot dotRed" data-name="██-014" style="left:30%; top:40%; animation-delay:360ms"></span>
-          <span class="mapDot dotRed" data-name="██-029" style="left:34%; top:66%; animation-delay:540ms"></span>
-          <span class="mapDot dotRed" data-name="██-033" style="left:60%; top:64%; animation-delay:720ms"></span>
-          <span class="mapDot dotRed" data-name="██-041" style="left:67%; top:69%; animation-delay:900ms"></span>
-          <span class="mapDot dotRed" data-name="██-055" style="left:73%; top:43%; animation-delay:1080ms"></span>
-          <span class="mapDot dotRed" data-name="██-067" style="left:70%; top:55%; animation-delay:1260ms"></span>
-          <span class="mapDot dotRed" data-name="██-072" style="left:79%; top:55%; animation-delay:1440ms"></span>
-          <span class="mapDot dotRed" data-name="██-088" style="left:85%; top:49%; animation-delay:1620ms"></span>
-          <span class="mapDot dotRed" data-name="██-091" style="left:90%; top:52%; animation-delay:1800ms"></span>
-          <span class="mapDot dotRed" data-name="██-103" style="left:87%; top:79%; animation-delay:1980ms"></span>
-        </div>
-      </div>
-    </div>
-
-  </div>
+</div>
 
 </div>
 
 </main>
 
 <footer>
-© 2021 Earth's Enigmas Co. · Internal Records Terminal
-
-<div class="prodFooterLogo">
-  <img id="logoProd" class="ledOn delay300" src="eec-logo2.png" alt="Production Studio Logo">
-</div>
+  <span class="footerText">© 2021 Earth's Enigmas Co. · Internal Records Terminal</span>
+  <div class="prodFooterLogo">
+    <img src="eec-logo2.png" alt="Production Studio Logo">
+  </div>
 </footer>
 
 <script>
-/* =============================
-   DATA
-   ============================= */
 const ENTITIES=[
   {id:"EEC-ENT-0001",name:"████_██",status:"SEALED"},
   {id:"EEC-ENT-0014",name:"███-███",status:"MISSING"},
@@ -334,208 +193,18 @@ const ENTITIES=[
   {id:"EEC-ENT-0041",name:"NEMO_03",status:"ACTIVE MONITORING"}
 ];
 
-const EVENT_LOG=[
-  {date:"2021-02-03", text:"Facility power fluctuation detected in Sub-Level B."},
-  {date:"2021-02-17", text:"Thermal signatures recorded in restricted corridor after hours."},
-  {date:"2021-03-01", text:"Security footage distortion between 02:11 and 02:16."},
-  {date:"2021-03-19", text:"Equipment calibration failure during routine diagnostics."},
-  {date:"2021-04-07", text:"Staff reported auditory anomaly in storage wing."},
-  {date:"2021-04-28", text:"Motion sensors triggered with no visible presence."},
-  {date:"2021-05-12", text:"Structural vibration detected without seismic activity."},
-  {spacer:true},
-  {alert:true, text:"UNUSUAL NOISE ACTIVITY REPORTED"},
-  {alert:true, text:"INITIAL INVESTIGATION YIELDED: NO RESULTS"},
-  {alert:true, text:"SOUND MONITORS RECORDED NOISES FROM THE BUILDING AT NIGHT"},
-  {alert:true, text:"WORKER'S SAFETY ADVISED UNTIL ENTITY IS LOCATED"},
-  {alert:true, text:"NEW INVESTIGATION SCHEDULE LOGGED"},
-  {spacer:true},
-  {alert:true, text:"CONTINUING TO MONITOR..."}
-];
-
-/* =============================
-   HELPERS
-   ============================= */
-function glitch(text,intensity=0.4){
+function glitch(text,intensity=.4){
   const glyphs=["█","▓","▒","░","#","/","_"];
-  let out="";
-  for(let i=0;i<text.length;i++){
-    const ch=text[i];
-    if(Math.random()<intensity && ch!=="-") out+=glyphs[Math.floor(Math.random()*glyphs.length)];
-    else out+=ch;
-  }
-  return out;
+  return text.split("").map(c=>Math.random()<intensity?glyphs[Math.floor(Math.random()*glyphs.length)]:c).join("");
 }
 
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-function stashAndClear(el){
-  el.dataset.full = el.textContent;
-  el.textContent = "";
-}
-
-function reveal(el){ el.classList.remove("prehide"); }
-
-function typeFromData(el, speed=10){
-  const full = el.dataset.full ?? "";
-  el.textContent = "";
-  el.classList.add("typeCursor");
-
-  return new Promise(resolve => {
-    let i=0;
-    const tick = () => {
-      el.textContent += full[i] || "";
-      i++;
-      if(i >= full.length){
-        el.classList.remove("typeCursor");
-        resolve();
-        return;
-      }
-      setTimeout(tick, speed);
-    };
-    tick();
-  });
-}
-
-async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=8, msgSpeed=8){
-  await typeFromData(dateEl, dateSpeed);
-  sepEl.textContent = " · ";
-  await typeFromData(msgEl, msgSpeed);
-}
-
-/* =============================
-   PREP: STASH + CLEAR EVERYTHING THAT TYPES
-   ============================= */
-const directiveTitle = document.getElementById("t_directive");
-const directiveBody  = document.getElementById("t_console");
-const directiveNotice= document.getElementById("t_notice");
-const phoneEl        = document.getElementById("t_phone");
-const eventTitle     = document.getElementById("t_eventTitle");
-const registryTitle  = document.getElementById("t_registryTitle");
-const mapTitle       = document.getElementById("t_mapTitle");
-const mapWrap        = document.getElementById("mapWrap");
-
-stashAndClear(directiveTitle);
-stashAndClear(directiveBody);
-stashAndClear(directiveNotice);
-
-phoneEl.dataset.full = glitch("+1-800-772-3419", 0.5);
-phoneEl.textContent = "";
-
-stashAndClear(eventTitle);
-stashAndClear(registryTitle);
-stashAndClear(mapTitle);
-
-// Build event log nodes with content stashed & cleared so nothing shows pre-animation
-const eventLogEl = document.getElementById("eventLog");
-const eventRows = [];
-
-for(const row of EVENT_LOG){
-  if(row.spacer){
-    const spacer = document.createElement("div");
-    spacer.style.height = "10px";
-    eventLogEl.appendChild(spacer);
-    continue;
-  }
-
-  if(row.alert){
-    const div = document.createElement("div");
-    div.className = "alertLine";
-    const span = document.createElement("span");
-    span.textContent = row.text;
-    stashAndClear(span);
-    div.appendChild(span);
-    eventLogEl.appendChild(div);
-    eventRows.push({type:"alert", el: span});
-    continue;
-  }
-
-  const div = document.createElement("div");
-  div.className = "logRow";
-
-  const date = document.createElement("span");
-  date.className = "logDate";
-  date.textContent = row.date;
-  stashAndClear(date);
-
-  const sep = document.createElement("span");
-  sep.textContent = "";
-
-  const msg = document.createElement("span");
-  msg.textContent = row.text;
-  stashAndClear(msg);
-
-  div.appendChild(date);
-  div.appendChild(sep);
-  div.appendChild(msg);
-  eventLogEl.appendChild(div);
-
-  eventRows.push({type:"dated", dateEl: date, sepEl: sep, msgEl: msg});
-}
-
-/* =============================
-   ENTITY LIST (render later)
-   ============================= */
-function renderEntitiesWithLed(){
-  const entityList = document.getElementById("entityList");
-  entityList.innerHTML = "";
-
-  ENTITIES.forEach((e, idx) => {
-    const li = document.createElement("li");
-    li.className = "entityItem ledOn";
-    li.style.animationDelay = `${120 + idx*80}ms`;
-
-    const displayName = e.name === "NEMO_03" ? e.name : glitch(e.name);
-    li.innerHTML = `
-      <div><span class="entityId">${e.id}</span> · ${displayName}</div>
-      <div class="entityStatus">STATUS: ${e.status}</div>
-    `;
-
-    entityList.appendChild(li);
-  });
-}
-
-/* =============================
-   BOOT SEQUENCE (order)
-   ============================= */
-window.addEventListener("DOMContentLoaded", async () => {
-  await sleep(220);
-
-  // Directive block
-  reveal(directiveTitle);
-  await typeFromData(directiveTitle, 9);
-
-  reveal(directiveBody);
-  await typeFromData(directiveBody, 7);
-
-  reveal(directiveNotice);
-  await typeFromData(directiveNotice, 9);
-
-  reveal(phoneEl);
-  await typeFromData(phoneEl, 12);
-
-  // Event log
-  await sleep(110);
-  reveal(eventTitle);
-  await typeFromData(eventTitle, 9);
-
-  reveal(eventLogEl);
-  for(const row of eventRows){
-    if(row.type === "alert") await typeFromData(row.el, 8);
-    else await typeLineWithDate(row.dateEl, row.sepEl, row.msgEl, 8, 8);
-  }
-
-  // Registry title then entities
-  await sleep(140);
-  reveal(registryTitle);
-  await typeFromData(registryTitle, 9);
-  renderEntitiesWithLed();
-
-  // Map title + map appears
-  await sleep(140);
-  reveal(mapTitle);
-  await typeFromData(mapTitle, 9);
-  reveal(mapWrap);
-  mapWrap.classList.add("ledOn");
+const list=document.getElementById("entityList");
+ENTITIES.forEach(e=>{
+  const li=document.createElement("li");
+  li.className="entityItem";
+  li.style.opacity=1;
+  li.innerHTML=`<div><span class="entityId">${e.id}</span> · ${e.name==="NEMO_03"?e.name:glitch(e.name)}</div><div class="entityStatus">STATUS: ${e.status}</div>`;
+  list.appendChild(li);
 });
 </script>
 
