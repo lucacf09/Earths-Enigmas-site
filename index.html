@@ -128,8 +128,23 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
   height:6px;
   border-radius:50%;
   transform:translate(-50%,-50%);
-  animation: dotPulse 2.2s ease-in-out infinite;
   cursor:pointer;
+}
+
+/* create separate pulsing ring so text does not scale */
+.mapDot::before{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border-radius:50%;
+  background:inherit;
+  opacity:.6;
+  animation: dotPulse 2.2s ease-in-out infinite;
+  z-index:-1;
+}
+
+.mapDot:hover::before{
+  animation-play-state: paused;
 }
 
 /* stop pulsing while hovering (keeps tooltip readable) */
@@ -182,11 +197,11 @@ footer{
   max-width:1200px;
   margin:0 auto;
   padding:40px 28px 60px;
-  font-family:var(--mono) !important;
+  font-family:var(--mono);
   font-size:11px;
   color:var(--muted);
 }
-.prodFooterLogo{position:fixed;bottom:20px;right:28px;z-index:999}
+.prodFooterLogo{position:absolute;bottom:20px;right:28px;z-index:1}
 .prodFooterLogo img{
   height:120px;
   width:auto;
