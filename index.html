@@ -559,7 +559,8 @@ II. Notes
 
 ENTER DECRYPTION KEY TO ACCESS FULL FILE.`;
 
-const NEMO_KEY = "EEC-3A"; // change to whatever you want
+const NEMO_KEY = "olssv dvysk!"; // change to whatever you want
+const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
 
     // =============================
     // HELPERS
@@ -654,22 +655,29 @@ const NEMO_KEY = "EEC-3A"; // change to whatever you want
       overlay.setAttribute("aria-hidden","true");
     }
     function openEncryptedNemoFile(){
-  // show preview first
+  // If already unlocked before, open full file immediately
+  const unlocked = localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
+  if (unlocked){
+    openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
+    return;
+  }
+
+  // Otherwise show preview + ask for key
   openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT);
 
-  // small delay so the modal is visibly open before prompt
   setTimeout(() => {
     const key = prompt("DECRYPTION KEY REQUIRED:");
-    if (key === null) return; // user cancelled
+    if (key === null) return;
 
     if (key.trim() === NEMO_KEY){
+      localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
       openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
     } else {
       openFileModal("NEMO_03 · ACCESS DENIED", [
         "CLEARANCE: FAILED",
         "KEY STATUS: INVALID",
         "NOTICE:",
-        "  Repeated attempts will be logged.",
+        "  Repeated attempts will be logged."
       ].join("\n"));
     }
   }, 80);
