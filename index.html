@@ -220,9 +220,24 @@ footer{
 @keyframes blink{50%{opacity:0}}
 
 @media (prefers-reduced-motion: reduce){
-  .ledOn{animation:none}
-  .typeCursor::after{animation:none}
-  .mapDot::before{animation:none}
+  .ledOn{
+    animation:none;
+    opacity:1;          /* ensure visible */
+    transform:none;
+    filter:none;
+  }
+
+  .typeCursor::after{
+    animation:none;
+  }
+
+  .mapDot::before{
+    animation:none;
+  }
+
+  .entityItem{
+    opacity:1;          /* THIS is the important fix */
+  }
 }
 
 @media (max-width: 480px){
