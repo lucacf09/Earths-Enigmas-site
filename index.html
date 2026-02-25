@@ -113,41 +113,32 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
   border-radius:14px;
   padding:14px;
 }
-.mapFrame{
+.mapContainer{position:relative;width:100%}
+.mapImage{
   width:100%;
-  height:auto;
   display:block;
-}
-.mapLand{fill:rgba(232,238,247,.08);stroke:rgba(116,211,255,.10);stroke-width:2}
-.mapGrid{stroke:rgba(159,176,196,.10);stroke-width:1}
-
-.dotRed{fill:#ff6b6b}
-.dotGreen{fill:#b6ff8a}
-
-@keyframes dotPulse{
-  0%{transform:scale(1);opacity:.85}
-  50%{transform:scale(1.55);opacity:.45}
-  100%{transform:scale(1);opacity:.85}
+  opacity:.86;
+  filter:grayscale(100%) contrast(115%) brightness(75%);
+  border-radius:12px;
 }
 
 .mapDot{
-  transform-box: fill-box;
-  transform-origin:center;
+  position:absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
   animation: dotPulse 2.6s ease-in-out infinite;
+  box-shadow: 0 0 0 4px rgba(255,255,255,.04);
 }
+.dotRed{background:#ff6b6b}
+.dotGreen{background:#b6ff8a}
 
-.mapDot:nth-child(1){animation-delay:0ms}
-.mapDot:nth-child(2){animation-delay:180ms}
-.mapDot:nth-child(3){animation-delay:360ms}
-.mapDot:nth-child(4){animation-delay:540ms}
-.mapDot:nth-child(5){animation-delay:720ms}
-.mapDot:nth-child(6){animation-delay:900ms}
-.mapDot:nth-child(7){animation-delay:1080ms}
-.mapDot:nth-child(8){animation-delay:1260ms}
-.mapDot:nth-child(9){animation-delay:1440ms}
-.mapDot:nth-child(10){animation-delay:1620ms}
-.mapDot:nth-child(11){animation-delay:1800ms}
-.mapDot:nth-child(12){animation-delay:1980ms}
+@keyframes dotPulse{
+  0%{transform:translate(-50%,-50%) scale(1);opacity:.9}
+  50%{transform:translate(-50%,-50%) scale(1.6);opacity:.4}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:.9}
+}
 
 /* FOOTER WITH PRODUCTION LOGO (BOTTOM RIGHT) */
 footer{
@@ -244,41 +235,25 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     <div class="card">
       <div class="title prehide" id="t_mapTitle">Global Incident Map · 2021</div>
       <div class="mapWrap prehide" id="mapWrap">
-        <svg class="mapFrame" viewBox="0 0 1000 500" role="img" aria-label="Global incident map">
-          <!-- grid -->
-          <g opacity="0.9">
-            <path class="mapGrid" d="M0 250 H1000" />
-            <path class="mapGrid" d="M0 125 H1000" />
-            <path class="mapGrid" d="M0 375 H1000" />
-            <path class="mapGrid" d="M250 0 V500" />
-            <path class="mapGrid" d="M500 0 V500" />
-            <path class="mapGrid" d="M750 0 V500" />
-          </g>
+        <div class="mapContainer" aria-label="Global incident map">
+          <!-- Put your map image next to index.html and name it world-map.png (or change the src below) -->
+          <img src="world-map.png" class="mapImage" alt="World map">
 
-          <!-- very simplified land masses (stylized) -->
-          <path class="mapLand" d="M85 170 C150 120, 260 115, 290 170 C320 220, 285 270, 215 285 C150 300, 80 260, 70 220 C60 190, 65 185, 85 170 Z"/>
-          <path class="mapLand" d="M280 280 C330 260, 380 280, 400 330 C420 385, 380 430, 330 420 C290 410, 260 360, 270 320 C275 300, 270 290, 280 280 Z"/>
-          <path class="mapLand" d="M470 155 C520 110, 600 105, 655 135 C720 170, 725 220, 675 245 C620 275, 560 265, 535 240 C510 215, 500 205, 470 190 C450 180, 450 170, 470 155 Z"/>
-          <path class="mapLand" d="M605 265 C650 250, 705 270, 725 310 C745 355, 720 400, 670 395 C620 390, 585 345, 590 305 C593 285, 592 275, 605 265 Z"/>
-          <path class="mapLand" d="M770 300 C820 275, 900 295, 930 345 C960 395, 920 445, 850 440 C790 435, 740 380, 750 335 C755 320, 755 310, 770 300 Z"/>
+          <!-- 12 pulsing dots (1 green in the UK) -->
+          <span class="mapDot dotGreen" style="left:49%; top:33%; animation-delay:0ms"></span>
 
-          <!-- dots (12 total). One green in the UK. 11 red worldwide -->
-          <!-- NOTE: Dots are ordered so nth-child delays apply consistently (we wrap dots in a group) -->
-          <g>
-            <circle class="mapDot dotGreen" cx="495" cy="165" r="6" /> <!-- UK (green) -->
-            <circle class="mapDot dotRed" cx="220" cy="190" r="6" /> <!-- US West -->
-            <circle class="mapDot dotRed" cx="300" cy="205" r="6" /> <!-- US East -->
-            <circle class="mapDot dotRed" cx="340" cy="330" r="6" /> <!-- Brazil -->
-            <circle class="mapDot dotRed" cx="610" cy="320" r="6" /> <!-- North Africa -->
-            <circle class="mapDot dotRed" cx="675" cy="345" r="6" /> <!-- East Africa -->
-            <circle class="mapDot dotRed" cx="735" cy="215" r="6" /> <!-- Russia -->
-            <circle class="mapDot dotRed" cx="705" cy="275" r="6" /> <!-- Middle East -->
-            <circle class="mapDot dotRed" cx="790" cy="275" r="6" /> <!-- India -->
-            <circle class="mapDot dotRed" cx="850" cy="245" r="6" /> <!-- China -->
-            <circle class="mapDot dotRed" cx="900" cy="260" r="6" /> <!-- Japan -->
-            <circle class="mapDot dotRed" cx="870" cy="395" r="6" /> <!-- Australia -->
-          </g>
-        </svg>
+          <span class="mapDot dotRed" style="left:22%; top:38%; animation-delay:180ms"></span>
+          <span class="mapDot dotRed" style="left:30%; top:40%; animation-delay:360ms"></span>
+          <span class="mapDot dotRed" style="left:34%; top:66%; animation-delay:540ms"></span>
+          <span class="mapDot dotRed" style="left:60%; top:64%; animation-delay:720ms"></span>
+          <span class="mapDot dotRed" style="left:67%; top:69%; animation-delay:900ms"></span>
+          <span class="mapDot dotRed" style="left:73%; top:43%; animation-delay:1080ms"></span>
+          <span class="mapDot dotRed" style="left:70%; top:55%; animation-delay:1260ms"></span>
+          <span class="mapDot dotRed" style="left:79%; top:55%; animation-delay:1440ms"></span>
+          <span class="mapDot dotRed" style="left:85%; top:49%; animation-delay:1620ms"></span>
+          <span class="mapDot dotRed" style="left:90%; top:52%; animation-delay:1800ms"></span>
+          <span class="mapDot dotRed" style="left:87%; top:79%; animation-delay:1980ms"></span>
+        </div>
       </div>
     </div>
 
