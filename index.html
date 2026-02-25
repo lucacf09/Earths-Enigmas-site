@@ -37,7 +37,7 @@ header{
 
 .mainLogo{display:flex;justify-content:center;align-items:center}
 .mainLogo img{
-  height:180px;
+  height:240px;
   width:auto;
   object-fit:contain;
   filter:drop-shadow(0 14px 40px rgba(0,0,0,.55));
@@ -76,6 +76,9 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 @media(max-width:900px){.split{grid-template-columns:1fr}}
 
+/* right column stack */
+.col{display:grid;gap:28px}
+
 /* EVENT LOG */
 .logList{font-family:var(--mono);font-size:12px;line-height:1.7}
 .logRow{margin-bottom:10px}
@@ -102,6 +105,49 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
 }
 .entityId{color:var(--accent)}
 .entityStatus{color:var(--muted)}
+
+/* MAP */
+.mapWrap{
+  border:1px solid var(--line);
+  background:rgba(7,9,12,.45);
+  border-radius:14px;
+  padding:14px;
+}
+.mapFrame{
+  width:100%;
+  height:auto;
+  display:block;
+}
+.mapLand{fill:rgba(232,238,247,.08);stroke:rgba(116,211,255,.10);stroke-width:2}
+.mapGrid{stroke:rgba(159,176,196,.10);stroke-width:1}
+
+.dotRed{fill:#ff6b6b}
+.dotGreen{fill:#b6ff8a}
+
+@keyframes dotPulse{
+  0%{transform:scale(1);opacity:.85}
+  50%{transform:scale(1.55);opacity:.45}
+  100%{transform:scale(1);opacity:.85}
+}
+
+.mapDot{
+  transform-box: fill-box;
+  transform-origin:center;
+  animation: dotPulse 2.6s ease-in-out infinite;
+}
+
+.mapDot:nth-child(1){animation-delay:0ms}
+.mapDot:nth-child(2){animation-delay:180ms}
+.mapDot:nth-child(3){animation-delay:360ms}
+.mapDot:nth-child(4){animation-delay:540ms}
+.mapDot:nth-child(5){animation-delay:720ms}
+.mapDot:nth-child(6){animation-delay:900ms}
+.mapDot:nth-child(7){animation-delay:1080ms}
+.mapDot:nth-child(8){animation-delay:1260ms}
+.mapDot:nth-child(9){animation-delay:1440ms}
+.mapDot:nth-child(10){animation-delay:1620ms}
+.mapDot:nth-child(11){animation-delay:1800ms}
+.mapDot:nth-child(12){animation-delay:1980ms}
 
 /* FOOTER WITH PRODUCTION LOGO (BOTTOM RIGHT) */
 footer{
@@ -145,6 +191,12 @@ footer{
 @media (prefers-reduced-motion: reduce){
   .ledOn{animation:none}
   .typeCursor::after{animation:none}
+  .mapDot{animation:none}
+}
+
+@media (max-width: 480px){
+  .mainLogo img{ height:180px; }
+  .prodFooterLogo img{ height:90px; }
 }
 </style>
 </head>
@@ -181,10 +233,55 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     <div class="logList prehide" id="eventLog" aria-label="Event log"></div>
   </div>
 
-  <!-- RIGHT: ENTITY REGISTRY -->
-  <div class="card">
-    <div class="title prehide" id="t_registryTitle">Corrupted Entity Registry</div>
-    <ul class="entityList" id="entityList" aria-label="Entity registry"></ul>
+  <!-- RIGHT: STACKED COLUMN -->
+  <div class="col">
+
+    <div class="card">
+      <div class="title prehide" id="t_registryTitle">Corrupted Entity Registry</div>
+      <ul class="entityList" id="entityList" aria-label="Entity registry"></ul>
+    </div>
+
+    <div class="card">
+      <div class="title prehide" id="t_mapTitle">Global Incident Map · 2021</div>
+      <div class="mapWrap prehide" id="mapWrap">
+        <svg class="mapFrame" viewBox="0 0 1000 500" role="img" aria-label="Global incident map">
+          <!-- grid -->
+          <g opacity="0.9">
+            <path class="mapGrid" d="M0 250 H1000" />
+            <path class="mapGrid" d="M0 125 H1000" />
+            <path class="mapGrid" d="M0 375 H1000" />
+            <path class="mapGrid" d="M250 0 V500" />
+            <path class="mapGrid" d="M500 0 V500" />
+            <path class="mapGrid" d="M750 0 V500" />
+          </g>
+
+          <!-- very simplified land masses (stylized) -->
+          <path class="mapLand" d="M85 170 C150 120, 260 115, 290 170 C320 220, 285 270, 215 285 C150 300, 80 260, 70 220 C60 190, 65 185, 85 170 Z"/>
+          <path class="mapLand" d="M280 280 C330 260, 380 280, 400 330 C420 385, 380 430, 330 420 C290 410, 260 360, 270 320 C275 300, 270 290, 280 280 Z"/>
+          <path class="mapLand" d="M470 155 C520 110, 600 105, 655 135 C720 170, 725 220, 675 245 C620 275, 560 265, 535 240 C510 215, 500 205, 470 190 C450 180, 450 170, 470 155 Z"/>
+          <path class="mapLand" d="M605 265 C650 250, 705 270, 725 310 C745 355, 720 400, 670 395 C620 390, 585 345, 590 305 C593 285, 592 275, 605 265 Z"/>
+          <path class="mapLand" d="M770 300 C820 275, 900 295, 930 345 C960 395, 920 445, 850 440 C790 435, 740 380, 750 335 C755 320, 755 310, 770 300 Z"/>
+
+          <!-- dots (12 total). One green in the UK. 11 red worldwide -->
+          <!-- NOTE: Dots are ordered so nth-child delays apply consistently (we wrap dots in a group) -->
+          <g>
+            <circle class="mapDot dotGreen" cx="495" cy="165" r="6" /> <!-- UK (green) -->
+            <circle class="mapDot dotRed" cx="220" cy="190" r="6" /> <!-- US West -->
+            <circle class="mapDot dotRed" cx="300" cy="205" r="6" /> <!-- US East -->
+            <circle class="mapDot dotRed" cx="340" cy="330" r="6" /> <!-- Brazil -->
+            <circle class="mapDot dotRed" cx="610" cy="320" r="6" /> <!-- North Africa -->
+            <circle class="mapDot dotRed" cx="675" cy="345" r="6" /> <!-- East Africa -->
+            <circle class="mapDot dotRed" cx="735" cy="215" r="6" /> <!-- Russia -->
+            <circle class="mapDot dotRed" cx="705" cy="275" r="6" /> <!-- Middle East -->
+            <circle class="mapDot dotRed" cx="790" cy="275" r="6" /> <!-- India -->
+            <circle class="mapDot dotRed" cx="850" cy="245" r="6" /> <!-- China -->
+            <circle class="mapDot dotRed" cx="900" cy="260" r="6" /> <!-- Japan -->
+            <circle class="mapDot dotRed" cx="870" cy="395" r="6" /> <!-- Australia -->
+          </g>
+        </svg>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -246,14 +343,11 @@ function glitch(text,intensity=0.4){
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
 function stashAndClear(el){
-  // Store original text and clear it so nothing is visible before typing.
   el.dataset.full = el.textContent;
   el.textContent = "";
 }
 
-function reveal(el){
-  el.classList.remove("prehide");
-}
+function reveal(el){ el.classList.remove("prehide"); }
 
 function typeFromData(el, speed=10){
   const full = el.dataset.full ?? "";
@@ -276,7 +370,7 @@ function typeFromData(el, speed=10){
   });
 }
 
-async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=9, msgSpeed=9){
+async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=8, msgSpeed=8){
   await typeFromData(dateEl, dateSpeed);
   sepEl.textContent = " · ";
   await typeFromData(msgEl, msgSpeed);
@@ -284,7 +378,6 @@ async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=9, msgSpeed=9){
 
 /* =============================
    PREP: STASH + CLEAR EVERYTHING THAT TYPES
-   (Runs immediately because script is at end of body.)
    ============================= */
 const directiveTitle = document.getElementById("t_directive");
 const directiveBody  = document.getElementById("t_console");
@@ -292,21 +385,23 @@ const directiveNotice= document.getElementById("t_notice");
 const phoneEl        = document.getElementById("t_phone");
 const eventTitle     = document.getElementById("t_eventTitle");
 const registryTitle  = document.getElementById("t_registryTitle");
+const mapTitle       = document.getElementById("t_mapTitle");
+const mapWrap        = document.getElementById("mapWrap");
 
 stashAndClear(directiveTitle);
 stashAndClear(directiveBody);
 stashAndClear(directiveNotice);
 
-// Phone is generated (corrupted) but still typed — stash placeholder now
 phoneEl.dataset.full = glitch("+1-800-772-3419", 0.5);
 phoneEl.textContent = "";
 
 stashAndClear(eventTitle);
 stashAndClear(registryTitle);
+stashAndClear(mapTitle);
 
 // Build event log nodes with content stashed & cleared so nothing shows pre-animation
 const eventLogEl = document.getElementById("eventLog");
-const eventRows = []; // {type, ...elements}
+const eventRows = [];
 
 for(const row of EVENT_LOG){
   if(row.spacer){
@@ -374,10 +469,9 @@ function renderEntitiesWithLed(){
 }
 
 /* =============================
-   BOOT SEQUENCE (guaranteed order)
+   BOOT SEQUENCE (order)
    ============================= */
 window.addEventListener("DOMContentLoaded", async () => {
-  // Faster boot
   await sleep(220);
 
   // Directive block
@@ -400,18 +494,22 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   reveal(eventLogEl);
   for(const row of eventRows){
-    if(row.type === "alert"){
-      await typeFromData(row.el, 8);
-    } else {
-      await typeLineWithDate(row.dateEl, row.sepEl, row.msgEl, 8, 8);
-    }
+    if(row.type === "alert") await typeFromData(row.el, 8);
+    else await typeLineWithDate(row.dateEl, row.sepEl, row.msgEl, 8, 8);
   }
 
-  // Registry title then entities appear
+  // Registry title then entities
   await sleep(140);
   reveal(registryTitle);
   await typeFromData(registryTitle, 9);
   renderEntitiesWithLed();
+
+  // Map title + map appears
+  await sleep(140);
+  reveal(mapTitle);
+  await typeFromData(mapTitle, 9);
+  reveal(mapWrap);
+  mapWrap.classList.add("ledOn");
 });
 </script>
 
