@@ -132,6 +132,9 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
   cursor:pointer;
 }
 
+/* stop pulsing while hovering (keeps tooltip readable) */
+.mapDot:hover{ animation-play-state: paused; }
+
 .dotRed{
   background:#ff2a2a;
   box-shadow:0 0 8px #ff2a2a;
@@ -183,7 +186,7 @@ footer{
   font-size:11px;
   color:var(--muted);
 }
-.prodFooterLogo{position:absolute;bottom:20px;right:28px}
+.prodFooterLogo{position:fixed;bottom:20px;right:28px;z-index:999}
 .prodFooterLogo img{
   height:120px;
   width:auto;
@@ -273,7 +276,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
           <img src="world-map.png" class="mapImage" alt="World map">
 
           <!-- 12 pulsing dots (1 green in the UK) -->
-          <span class="mapDot dotGreen" data-name="NEMO_03" style="left:51.2%; top:31.8%; animation-delay:0ms"></span>
+          <span class="mapDot dotGreen" data-name="NEMO_03" style="left:49.6%; top:23.5%; animation-delay:0ms"></span>
 
           <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%; animation-delay:180ms"></span>
           <span class="mapDot dotRed" data-name="██-014" style="left:30%; top:40%; animation-delay:360ms"></span>
