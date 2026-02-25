@@ -117,25 +117,58 @@ main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
 .mapImage{
   width:100%;
   display:block;
-  opacity:.86;
-  filter:grayscale(100%) contrast(115%) brightness(75%);
+  opacity:.9;
+  filter:contrast(115%) brightness(85%);
   border-radius:12px;
 }
 
 .mapDot{
   position:absolute;
-  width:10px;
-  height:10px;
+  width:6px;
+  height:6px;
   border-radius:50%;
   transform:translate(-50%,-50%);
-  animation: dotPulse 2.6s ease-in-out infinite;
-  box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+  animation: dotPulse 2.2s ease-in-out infinite;
+  cursor:pointer;
 }
-.dotRed{background:#ff6b6b}
-.dotGreen{background:#b6ff8a}
+
+.dotRed{
+  background:#ff2a2a;
+  box-shadow:0 0 8px #ff2a2a;
+}
+
+.dotGreen{
+  background:#00ff5a;
+  box-shadow:0 0 8px #00ff5a;
+}
+
+/* Tooltip */
+.mapDot::after{
+  content:attr(data-name);
+  position:absolute;
+  bottom:140%;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(10,14,19,.95);
+  border:1px solid var(--line);
+  padding:4px 8px;
+  font-size:10px;
+  font-family:var(--mono);
+  color:var(--accent);
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .15s ease;
+}
+
+.mapDot:hover::after{opacity:1}
 
 @keyframes dotPulse{
-  0%{transform:translate(-50%,-50%) scale(1);opacity:.9}
+  0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  50%{transform:translate(-50%,-50%) scale(1.8);opacity:.35}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+}
+
   50%{transform:translate(-50%,-50%) scale(1.6);opacity:.4}
   100%{transform:translate(-50%,-50%) scale(1);opacity:.9}
 }
@@ -240,19 +273,19 @@ All anomalous activity is to be documented, contained, and reclassified for publ
           <img src="world-map.png" class="mapImage" alt="World map">
 
           <!-- 12 pulsing dots (1 green in the UK) -->
-          <span class="mapDot dotGreen" style="left:49%; top:33%; animation-delay:0ms"></span>
+          <span class="mapDot dotGreen" data-name="NEMO_03" style="left:51.2%; top:31.8%; animation-delay:0ms"></span>
 
-          <span class="mapDot dotRed" style="left:22%; top:38%; animation-delay:180ms"></span>
-          <span class="mapDot dotRed" style="left:30%; top:40%; animation-delay:360ms"></span>
-          <span class="mapDot dotRed" style="left:34%; top:66%; animation-delay:540ms"></span>
-          <span class="mapDot dotRed" style="left:60%; top:64%; animation-delay:720ms"></span>
-          <span class="mapDot dotRed" style="left:67%; top:69%; animation-delay:900ms"></span>
-          <span class="mapDot dotRed" style="left:73%; top:43%; animation-delay:1080ms"></span>
-          <span class="mapDot dotRed" style="left:70%; top:55%; animation-delay:1260ms"></span>
-          <span class="mapDot dotRed" style="left:79%; top:55%; animation-delay:1440ms"></span>
-          <span class="mapDot dotRed" style="left:85%; top:49%; animation-delay:1620ms"></span>
-          <span class="mapDot dotRed" style="left:90%; top:52%; animation-delay:1800ms"></span>
-          <span class="mapDot dotRed" style="left:87%; top:79%; animation-delay:1980ms"></span>
+          <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%; animation-delay:180ms"></span>
+          <span class="mapDot dotRed" data-name="██-014" style="left:30%; top:40%; animation-delay:360ms"></span>
+          <span class="mapDot dotRed" data-name="██-029" style="left:34%; top:66%; animation-delay:540ms"></span>
+          <span class="mapDot dotRed" data-name="██-033" style="left:60%; top:64%; animation-delay:720ms"></span>
+          <span class="mapDot dotRed" data-name="██-041" style="left:67%; top:69%; animation-delay:900ms"></span>
+          <span class="mapDot dotRed" data-name="██-055" style="left:73%; top:43%; animation-delay:1080ms"></span>
+          <span class="mapDot dotRed" data-name="██-067" style="left:70%; top:55%; animation-delay:1260ms"></span>
+          <span class="mapDot dotRed" data-name="██-072" style="left:79%; top:55%; animation-delay:1440ms"></span>
+          <span class="mapDot dotRed" data-name="██-088" style="left:85%; top:49%; animation-delay:1620ms"></span>
+          <span class="mapDot dotRed" data-name="██-091" style="left:90%; top:52%; animation-delay:1800ms"></span>
+          <span class="mapDot dotRed" data-name="██-103" style="left:87%; top:79%; animation-delay:1980ms"></span>
         </div>
       </div>
     </div>
