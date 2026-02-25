@@ -7,6 +7,12 @@
   <title>Earth's Enigmas Co. — Records Terminal</title>
 
   <style>
+    /* prevent image long-press save/share callout */
+    .noCallout{
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
     /* SKIP BOOT BUTTON */
     .skipBootBtn{
       position:fixed;
@@ -392,7 +398,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
   <footer>
     <span class="footerText">© 2021 Earth's Enigmas Co. · Internal Records Terminal</span>
     <div class="prodFooterLogo">
-      <img id="logoProd" class="ledOn delay300" src="eec-logo2.png" alt="Production Studio Logo">
+      <img id="logoProd" class="ledOn delay300 noCallout" src="eec-logo2.png" alt="Production Studio Logo">
     </div>
   </footer>
 
@@ -969,36 +975,44 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       const prodLogo = document.getElementById("logoProd");
       
       if (prodLogo){
-        // Desktop: Shift + click
+        // Desktop: Shift + click still works
         prodLogo.addEventListener("click", (e) => {
-          if (e.shiftKey){
-            revealOperatorKey();
-          }
+          if (e.shiftKey) revealOperatorKey();
         });
         
-        // Mobile + desktop: long-press (press and hold)
-        let pressTimer = null;
-        const startPress = () => {
-          // prevent multiple timers
-          if (pressTimer) clearTimeout(pressTimer);
-          pressTimer = setTimeout(() => {
+        // Mobile-friendly: 7 taps within 3 seconds
+        let tapCount = 0;
+        let tapTimer = null;
+
+        const registerTap = () => {
+          tapCount++;
+
+          if (tapCount === 1){
+            tapTimer = setTimeout(() => {
+              tapCount = 0;
+              tapTimer = null;
+            }, 3000);
+          }
+
+          if (tapCount >= 7){
+            if (tapTimer) clearTimeout(tapTimer);
+            tapCount = 0;
+            tapTimer = null;
             revealOperatorKey();
-          }, 1200); // hold for 1.2s
+          }
         };
-        const cancelPress = () => {
-          if (pressTimer) clearTimeout(pressTimer);
-          pressTimer = null;
-        };
-        
-        // Touch
-        prodLogo.addEventListener("touchstart", startPress, { passive: true });
-        prodLogo.addEventListener("touchend", cancelPress);
-        prodLogo.addEventListener("touchcancel", cancelPress);
-        
-        // Mouse (optional: lets laptop users long-press too)
-        prodLogo.addEventListener("mousedown", startPress);
-        prodLogo.addEventListener("mouseup", cancelPress);
-        prodLogo.addEventListener("mouseleave", cancelPress)
+
+        prodLogo.addEventListener("touchend", (e) => {
+          // stop ghost clicks / image interactions
+          e.preventDefault();
+          registerTap();
+        }, { passive: false });
+
+        // Also allow fast clicking on desktop without shift (optional)
+        prodLogo.addEventListener("dblclick", () => {
+          // optional: remove if you don't want this
+          // revealOperatorKey();
+        });
       }
       
       hideSkipButton();
