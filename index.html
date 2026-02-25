@@ -7,6 +7,42 @@
   <title>Earth's Enigmas Co. — Records Terminal</title>
 
   <style>
+    /* SKIP BOOT BUTTON */
+    .skipBootBtn{
+      position:fixed;
+      top:14px;
+      left:14px;
+      z-index:10000;
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.65);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+    }
+        /* FILE MODAL ACTIONS */
+    .modalBody{position:relative;} /* needed for absolute positioning */
+    .fileActions{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      display:none;
+    }
+    .fileActions[aria-hidden="false"]{display:block}
+    
+    .fileActionBtn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.65);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+    }
     :root{
       --bg:#07090c;
       --panel:#0d1117;
@@ -23,6 +59,7 @@
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       --radius: 18px;
     }
+    
 
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -290,6 +327,7 @@
 </head>
 
 <body>
+  <button class="skipBootBtn" id="skipBootBtn" type="button">skip animation</button>
   <header>
     <div class="mainLogo">
       <img id="logoEEC" class="ledOn" src="eec-logo.png" alt="Earth's Enigmas Co. Logo">
@@ -381,6 +419,10 @@ All anomalous activity is to be documented, contained, and reclassified for publ
       </div>
       <div class="modalBody">
         <div class="fileConsole" id="fileBody"></div>
+        
+        <div class="fileActions" id="fileActions" aria-hidden="true">
+          <button class="fileActionBtn" id="enterKeyBtn" type="button">enter encryption key</button>
+        </div>
       </div>
     </div>
   </div>
@@ -590,10 +632,22 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
     function typeFromData(el, speed=10){
       const full = el.dataset.full ?? "";
       el.textContent = "";
+      
+      if (SKIP_BOOT){
+        el.textContent = full;
+        el.classList.remove("typeCursor");
+        return Promise.resolve();
+      }
       el.classList.add("typeCursor");
       return new Promise(resolve => {
         let i=0;
         const tick = () => {
+          if (SKIP_BOOT){
+            el.textContent = full;
+            el.classList.remove("typeCursor");
+            resolve();
+            return;
+          }
           el.textContent += full[i] || "";
           i++;
           if(i >= full.length){
@@ -616,6 +670,26 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
     // =============================
     // VIDEO / FILE MODALS
     // =============================
+        let SKIP_BOOT = false;
+    
+    function isNemoUnlocked(){
+      return localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
+    }
+    
+    function unlockNemo(){
+      localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
+    }
+    
+    function relockNemo(){
+      localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY);
+    }
+    
+    function setFileActions({ showEnterKey = false } = {}){
+      const actions = document.getElementById("fileActions");
+      if (!actions) return;
+      actions.setAttribute("aria-hidden", showEnterKey ? "false" : "true");
+    }
+    
     const VIDEO_SRC = "nemo.mp4";
 
     function openNemoModal(){
@@ -649,18 +723,23 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       document.getElementById("fileBody").textContent = body;
       overlay.setAttribute("aria-hidden","false");
     }
-
+    
     function closeFileModal(){
       const overlay = document.getElementById("fileModal");
       overlay.setAttribute("aria-hidden","true");
+      setFileActions({ showEnterKey:false });
     }
+    
     function openEncryptedNemoFile(){
-  // If already unlocked before, open full file immediately
-  const unlocked = localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
-  if (unlocked){
-    openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
-    return;
-  }
+      if (isNemoUnlocked()){
+        setFileActions({ showEnterKey:false });
+        openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
+        return;
+      }
+      
+      openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT);
+      setFileActions({ showEnterKey:true });
+    }
 
   // Otherwise show preview + ask for key
   openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT);
@@ -810,6 +889,15 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
     window.addEventListener("DOMContentLoaded", async () => {
       await sleep(220);
 
+      // Skip animation button
+      const skipBtn = document.getElementById("skipBootBtn");
+      if (skipBtn){
+        skipBtn.addEventListener("click", () => {
+          SKIP_BOOT = true;
+          revealAllInstant();
+        });
+      }
+
       // Directive
       reveal(directiveTitle);
       await typeFromData(directiveTitle, 9);
@@ -870,6 +958,28 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
           closeFileModal();
         }
       });
+      // Enter key button (inside file modal)
+      const enterKeyBtn = document.getElementById("enterKeyBtn");
+      if (enterKeyBtn){
+        enterKeyBtn.addEventListener("click", () => {
+          const key = prompt("DECRYPTION KEY REQUIRED:");
+          if (key === null) return;
+          
+          if (key.trim() === NEMO_KEY){
+            unlockNemo();
+            setFileActions({ showEnterKey:false });
+            openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
+          } else {
+            openFileModal("NEMO_03 · ACCESS DENIED", [
+              "CLEARANCE: FAILED",
+              "KEY STATUS: INVALID",
+              "NOTICE:",
+              "  Repeated attempts will be logged."
+            ].join("\n"));
+            setFileActions({ showEnterKey:true });
+          }
+        });
+      }
       // Operator key reveal (Shift + click production logo)
       const prodLogo = document.getElementById("logoProd");
       
