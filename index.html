@@ -551,8 +551,7 @@ Restricted Archive Division`;
       const s=String(text);
       for(let i=0;i<s.length;i++){
         const ch=s[i];
-        if (ch === " " || ch === "
-" || ch === "	"){ out += ch; continue; }
+        if (ch === " " || ch === "\n" || ch === "\t"){ out += ch; continue; }
         if(Math.random()<intensity && ch!=="-") out+=glyphs[Math.floor(Math.random()*glyphs.length)];
         else out+=ch;
       }
@@ -738,8 +737,7 @@ Restricted Archive Division`;
               "NOTICE:",
               "  Do not attempt reconstruction.",
               "  Report any secondary copies.",
-            ].join("
-"));
+            ].join("\n"));
           }
         });
 
