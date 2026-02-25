@@ -236,8 +236,19 @@ footer{
   }
 
   .entityItem{
-    opacity:1;          /* THIS is the important fix */
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(7,9,12,.45);
+  line-height:1.6;
+  opacity:1;           /* visible by default */
   }
+
+  .entityItem.ledOn{
+  opacity:0;           /* only hide if we're animating it */
+  }
+
+  .entityItem.ledOn{ opacity:1 !important; }
 }
 
 @media (max-width: 480px){
