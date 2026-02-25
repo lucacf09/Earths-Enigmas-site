@@ -674,6 +674,17 @@ const NEMO_KEY = "EEC-3A"; // change to whatever you want
     }
   }, 80);
 }
+    function revealOperatorKey(){
+  openFileModal("SYSTEM CACHE RECOVERY", [
+    "LOCAL HEADER CACHE RESTORED",
+    "—",
+    "RECOVERED CREDENTIAL:",
+    "DECRYPTION KEY: " + NEMO_KEY,
+    "—",
+    "NOTICE:",
+    "  This action has been logged.",
+  ].join("\n"));
+}
 
     // =============================
     // BUILD EVENT LOG DOM (so we can type in order)
@@ -851,6 +862,16 @@ const NEMO_KEY = "EEC-3A"; // change to whatever you want
           closeFileModal();
         }
       });
+      // Operator key reveal (Shift + click production logo)
+      const prodLogo = document.getElementById("logoProd");
+      
+      if (prodLogo){
+        prodLogo.addEventListener("click", (e) => {
+          if (e.shiftKey){
+            revealOperatorKey();
+          }
+        });
+      }
     });
   </script>
 </body>
