@@ -245,6 +245,100 @@
     @keyframes blink{50%{opacity:0}}
 
     /* =============================
+       INTRO OVERLAY
+       ============================= */
+    .introOverlay{
+      position:fixed;
+      inset:0;
+      z-index:20000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(900px 600px at 50% 40%, rgba(116,211,255,.12), transparent 60%),
+        var(--bg);
+      opacity:1;
+      transition: opacity .55s ease, visibility .55s ease;
+    }
+    .introOverlay[aria-hidden="true"]{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .introStage{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+      min-height:240px;
+      padding:24px;
+      width:min(980px, 92vw);
+    }
+    .introGlobe{
+      width:min(220px, 44vw);
+      height:auto;
+      overflow:visible;
+      filter: drop-shadow(0 18px 50px rgba(0,0,0,.65));
+      transform: translateX(0);
+    }
+    .globeStroke{
+      fill:none;
+      stroke: rgba(232,238,247,.92);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: var(--dash, 600);
+      stroke-dashoffset: var(--dash, 600);
+      opacity:.92;
+    }
+    .introWordmark{
+      width:min(620px, 70vw);
+      opacity:0;
+      transform: translateX(-8px);
+    }
+    .introType{
+      font-family: var(--mono);
+      font-size: 16px;
+      letter-spacing: 4px;
+      color: rgba(232,238,247,.92);
+      white-space: nowrap;
+    }
+    .introType.typeCursor::after{
+      content:"▍";
+      margin-left:2px;
+      opacity:1;
+      animation: blink 700ms steps(1,end) infinite;
+    }
+    .introSub{
+      margin-top:10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2.2px;
+      color: rgba(159,176,196,.9);
+    }
+    .introSkip{
+      position:absolute;
+      top:14px;
+      left:14px;
+      z-index:2;
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.55);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+    }
+    @keyframes introSlideLeft{ to{ transform: translateX(-160px); } }
+    @keyframes introWordmarkIn{ to{ opacity:1; transform: translateX(0); } }
+    @media (max-width: 640px){
+      @keyframes introSlideLeft{ to{ transform: translateX(-90px);} }
+      .introType{ font-size:14px; letter-spacing:3px; }
+    }
+
+    /* =============================
        SKIP BOOT BUTTON
        ============================= */
     .skipBootBtn{
@@ -330,7 +424,6 @@
     .fileConsole::-webkit-scrollbar{width:10px}
     .fileConsole::-webkit-scrollbar-thumb{background:rgba(28,37,50,.9);border-radius:999px;border:2px solid rgba(7,9,12,.55)}
 
-    /* File modal action button (enter key) */
     .fileActions{
       position:absolute;
       right:14px;
@@ -364,6 +457,27 @@
 </head>
 
 <body>
+  <!-- INTRO OVERLAY -->
+  <div id="introOverlay" class="introOverlay" aria-hidden="false">
+    <div class="introStage" aria-label="Intro animation">
+      <svg id="introGlobe" class="introGlobe" viewBox="0 0 220 220" role="img" aria-label="EEC globe mark">
+        <circle class="globeStroke" cx="110" cy="110" r="82"></circle>
+        <path class="globeStroke" d="M 28 110 C 64 92, 156 92, 192 110"></path>
+        <path class="globeStroke" d="M 34 82 C 70 68, 150 68, 186 82"></path>
+        <path class="globeStroke" d="M 34 138 C 70 152, 150 152, 186 138"></path>
+        <path class="globeStroke" d="M 110 28 C 92 64, 92 156, 110 192"></path>
+        <path class="globeStroke" d="M 110 28 C 128 64, 128 156, 110 192"></path>
+      </svg>
+
+      <div class="introWordmark">
+        <div id="introType" class="introType"></div>
+        <div class="introSub">INTERNAL RECORDS TERMINAL</div>
+      </div>
+
+      <button id="introSkip" class="introSkip" type="button">skip intro</button>
+    </div>
+  </div>
+
   <button class="skipBootBtn" id="skipBootBtn" type="button">skip animation</button>
 
   <header>
@@ -403,8 +517,6 @@ All anomalous activity is to be documented, contained, and reclassified for publ
           <div class="mapWrap prehide" id="mapWrap">
             <div class="mapContainer" aria-label="Global incident map">
               <img src="world-map.png" class="mapImage" alt="World map">
-
-              <!-- 12 total dots (1 green in the UK) -->
               <span class="mapDot dotGreen" id="nemoDot" data-name="NEMO_03" style="left:49.6%; top:23.5%;"></span>
 
               <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%;"></span>
@@ -432,7 +544,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     </div>
   </footer>
 
-  <!-- Video Modal (green dot) -->
+  <!-- Video Modal -->
   <div class="modalOverlay" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="NEMO_03 transmission">
     <div class="modal">
       <div class="modalTop">
@@ -454,7 +566,6 @@ All anomalous activity is to be documented, contained, and reclassified for publ
       </div>
       <div class="modalBody">
         <div class="fileConsole" id="fileBody"></div>
-
         <div class="fileActions" id="fileActions" aria-hidden="true">
           <button class="fileActionBtn" id="enterKeyBtn" type="button">enter encryption key</button>
         </div>
@@ -467,8 +578,6 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     // DEV MODE
     // =============================
     const DEV_TOKEN = "ANOMALYCRISIS";
-
-    // Canonical dev order must be EXACT:
     const DEV_ENTITY_ORDER = [
       "ALIENI_04",
       "JULIA_01",
@@ -478,7 +587,6 @@ All anomalous activity is to be documented, contained, and reclassified for publ
       "VOLTA_01",
       "NEMO_03"
     ];
-
     function isDevMode(){
       const params = new URLSearchParams(window.location.search);
       return params.get("dev") === DEV_TOKEN;
@@ -516,7 +624,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     ];
 
     // -----------------------------
-    // NEMO FILE
+    // NEMO FILE + KEY
     // -----------------------------
     const NEMO_FILE_TEXT = `Project NEMO – Experimental Adaptation Initiative
 Creature File: NEMO_03
@@ -913,9 +1021,6 @@ Restricted Archive Division`;
       "VOLTA_01": VOLTA_FILE_TEXT,
     };
 
-    // -----------------------------
-    // WIP FILES (fallback)
-    // -----------------------------
     const WIP_FILE_TEXT = (codename) => `ENTITY FILE: ${codename}
 STATUS: WORK IN PROGRESS
 
@@ -1021,12 +1126,10 @@ STATUS: WORK IN PROGRESS
       if (!overlay || !video) return;
 
       overlay.setAttribute("aria-hidden","false");
+
       video.muted = false;
       video.volume = 1;
-
-      if (!video.currentSrc){
-        video.src = VIDEO_SRC;
-      }
+      if (!video.currentSrc) video.src = VIDEO_SRC;
       try{ video.currentTime = 0; }catch(_e){}
 
       const p = video.play();
@@ -1098,7 +1201,7 @@ STATUS: WORK IN PROGRESS
     }
 
     // =============================
-    // BUILD EVENT LOG DOM
+    // BUILD EVENT LOG DOM (stash text)
     // =============================
     const phoneEl         = document.getElementById("t_phone");
     const directiveTitle  = document.getElementById("t_directive");
@@ -1216,7 +1319,6 @@ STATUS: WORK IN PROGRESS
               return;
             }
             if (!dev) return;
-
             const text = ENTITY_FILES[e.name] || WIP_FILE_TEXT(e.name);
             openFileModal(`${e.name} · ENTITY FILE`, text, { showEnterKey:false });
           });
@@ -1227,9 +1329,83 @@ STATUS: WORK IN PROGRESS
     }
 
     // =============================
+    // INTRO -> BOOT
+    // =============================
+    async function runIntroThenBoot(){
+      const intro = document.getElementById("introOverlay");
+      const globe = document.getElementById("introGlobe");
+      const wordmark = document.querySelector(".introWordmark");
+      const typeEl = document.getElementById("introType");
+      const skip = document.getElementById("introSkip");
+
+      if (!intro || !globe || !typeEl || !wordmark){
+        await runBootSequence();
+        return;
+      }
+
+      let skipped = false;
+
+      const endNow = async () => {
+        if (skipped) return;
+        skipped = true;
+        intro.setAttribute("aria-hidden","true");
+        await sleep(40);
+        await runBootSequence();
+      };
+
+      if (skip) skip.addEventListener("click", endNow);
+
+      const strokes = globe.querySelectorAll(".globeStroke");
+      strokes.forEach(p => {
+        try{
+          const len = p.getTotalLength();
+          const dash = Math.ceil(len + 2);
+          p.style.setProperty("--dash", String(dash));
+          p.style.strokeDasharray = String(dash);
+          p.style.strokeDashoffset = String(dash);
+        }catch(_e){}
+      });
+
+      strokes.forEach((p, i) => {
+        p.style.transition = "none";
+        p.getBoundingClientRect();
+        p.style.transition = `stroke-dashoffset 700ms ease ${i*90}ms, opacity 500ms ease ${i*90}ms`;
+        p.style.strokeDashoffset = "0";
+        p.style.opacity = ".95";
+      });
+
+      await sleep(700 + (strokes.length-1)*90 + 120);
+      if (skipped) return;
+
+      globe.style.animation = "introSlideLeft 650ms cubic-bezier(.2,.9,.25,1) forwards";
+      wordmark.style.animation = "introWordmarkIn 500ms ease 420ms forwards";
+
+      await sleep(720);
+      if (skipped) return;
+
+      const fullText = "EARTH’S ENIGMAS CO.";
+      typeEl.textContent = "";
+      typeEl.classList.add("typeCursor");
+
+      for (let i = 0; i < fullText.length; i++){
+        if (skipped) return;
+        typeEl.textContent += fullText[i];
+        await sleep(38);
+      }
+      typeEl.classList.remove("typeCursor");
+
+      await sleep(380);
+      if (skipped) return;
+
+      intro.setAttribute("aria-hidden","true");
+      await sleep(560);
+      await runBootSequence();
+    }
+
+    // =============================
     // BOOT SEQUENCE
     // =============================
-    window.addEventListener("DOMContentLoaded", async () => {
+    async function runBootSequence(){
       await sleep(220);
 
       // Skip animation
@@ -1302,7 +1478,7 @@ STATUS: WORK IN PROGRESS
         }
       });
 
-      // Enter key button (inside file modal)
+      // Enter key button
       const enterKeyBtn = document.getElementById("enterKeyBtn");
       if (enterKeyBtn){
         enterKeyBtn.addEventListener("click", () => {
@@ -1323,9 +1499,7 @@ STATUS: WORK IN PROGRESS
         });
       }
 
-      // Operator key reveal:
-      // - Desktop: Shift+click production logo
-      // - Mobile: 7 taps within 3 seconds
+      // Operator key reveal (tap threshold = 3)
       const prodLogo = document.getElementById("logoProd");
       if (prodLogo){
         prodLogo.addEventListener("click", (e) => {
@@ -1334,7 +1508,7 @@ STATUS: WORK IN PROGRESS
 
         let tapCount = 0;
         let tapTimer = null;
-        const TAP_THRESHOLD = 7;
+        const TAP_THRESHOLD = 3;
         const TAP_WINDOW_MS = 3000;
 
         const registerTap = () => {
@@ -1361,13 +1535,16 @@ STATUS: WORK IN PROGRESS
         }, { passive:false });
       }
 
-      // Hide skip button automatically once boot finishes
+      // Hide skip button once boot finishes
       hideSkipButton();
 
-      // Optional: make it obvious in the tab when dev mode is active
       if (isDevMode()){
         document.title = "DEV — " + document.title;
       }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      runIntroThenBoot();
     });
   </script>
 </body>
