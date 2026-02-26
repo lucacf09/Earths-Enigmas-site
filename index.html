@@ -1304,76 +1304,86 @@ STATUS: WORK IN PROGRESS
       });
     }
 
-    // =============================
-    // INTRO -> BOOT
-    // =============================
-    async function loadIntroSVG(){
+// =============================
+// INTRO -> BOOT (FIXED + SHORTER)
+// =============================
+    async function loadIntroSVG({ timeoutMs = 1200 } = {}){
       const wrap = document.getElementById("introGlobeWrap");
       if (!wrap) return null;
-
+    
+      // show a tiny loader so overlay isn't "empty"
+      wrap.innerHTML = `<div style="font-family:var(--mono);font-size:12px;color:rgba(232,238,247,.7);letter-spacing:2px;">
+        LOADING MARK…
+      </div>`;
+    
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), timeoutMs);
+    
       try{
-        const res = await fetch("EEC-logo.svg", { cache: "no-cache" });
+        const res = await fetch("EEC-logo.svg", { cache: "no-cache", signal: controller.signal });
+        clearTimeout(t);
+    
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const svgText = await res.text();
+    
         wrap.innerHTML = svgText;
-
+    
         const svg = wrap.querySelector("svg");
-        if (!svg) return null;
-
+        if (!svg) throw new Error("No <svg> found in file");
+    
         svg.removeAttribute("width");
         svg.removeAttribute("height");
         svg.style.width = "100%";
         svg.style.height = "auto";
-
+        svg.style.display = "block";
+    
         return svg;
       }catch(e){
-        console.error("Failed to load EEC-logo.svg", e);
+        clearTimeout(t);
+        console.error("Intro SVG load failed:", e);
+        wrap.innerHTML = ""; // clean up loader
         return null;
       }
     }
-
+    
     function getDrawableEls(svg){
-      // Aim: only animate "linework" (usually stroke-based). Avoid filled text shapes.
       const candidates = svg.querySelectorAll("path, circle, line, ellipse, polyline, polygon, rect");
+    
       const out = [];
-
       candidates.forEach(el => {
-        // skip <text> and anything inside <text>
         if (el.closest("text")) return;
-
+    
         const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
         const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
-
-        // heuristic: animate if it's stroke-based, or explicitly fill="none"
+    
         const strokeBased = strokeAttr && strokeAttr !== "none";
         const fillNone = fillAttr === "none";
-
+    
         if (strokeBased || fillNone) out.push(el);
       });
-
-      // if we found nothing (some SVGs omit stroke attr), fall back to ALL paths
-      if (out.length === 0){
+    
+      if (out.length === 0) {
         svg.querySelectorAll("path, circle, line, ellipse, polyline, polygon").forEach(el => out.push(el));
       }
-
+    
       return out;
     }
-
+    
     let bootStarted = false;
-
+    
     async function runIntroThenBoot(){
       const intro = document.getElementById("introOverlay");
       const wordmark = document.querySelector(".introWordmark");
       const typeEl = document.getElementById("introType");
       const skip = document.getElementById("introSkip");
-
-      // if intro missing, just boot
+    
       if (!intro || !wordmark || !typeEl){
         await runBootSequence();
         return;
       }
-
+    
       let skipped = false;
-
+    
       const endNow = async () => {
         if (skipped) return;
         skipped = true;
@@ -1381,89 +1391,105 @@ STATUS: WORK IN PROGRESS
         await sleep(40);
         await runBootSequence();
       };
-
+    
       if (skip) skip.addEventListener("click", endNow);
-
-      const svg = await loadIntroSVG();
+    
+      // Keep overlay visible while loading
+      intro.setAttribute("aria-hidden","false");
+    
+      const svg = await loadIntroSVG({ timeoutMs: 1200 });
+    
+      // If it fails, don't hang — just boot
       if (!svg){
         await endNow();
         return;
       }
-
-      // DRAW PHASE
+    
+      // SHORTER TIMINGS
+      const DRAW_MS = 520;
+      const STAGGER_MS = 40;
+      const SLIDE_MS = 520;
+      const WORDMARK_DELAY = 220;
+      const TYPE_MS = 26;     // per character
+      const HOLD_MS = 180;
+      const FADE_MS = 420;
+    
       const drawEls = getDrawableEls(svg);
-
-      // prep dash lengths + glow
+    
+      // prep dash + glow
       drawEls.forEach(el => {
         el.classList.add("eecIntroGlow");
-
-        // If it has fill (like filled text paths) don't force fill:none here.
-        // For stroke: gently set if missing
-        const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
+    
+        // Only enforce stroke if it's clearly linework
         const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
+        const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
         const shouldBeStroke = strokeAttr !== "none" || fillAttr === "none";
-
+    
         if (shouldBeStroke){
           if (!el.getAttribute("stroke")) el.setAttribute("stroke", "rgba(232,238,247,.92)");
           if (!el.getAttribute("stroke-width")) el.setAttribute("stroke-width", "2.2");
           el.setAttribute("stroke-linecap", "round");
           el.setAttribute("stroke-linejoin", "round");
         }
-
-        // getTotalLength only exists on SVGGeometryElement
+    
         try{
           const len = el.getTotalLength();
           const dash = Math.ceil(len + 2);
           el.style.strokeDasharray = String(dash);
           el.style.strokeDashoffset = String(dash);
           el.style.opacity = ".95";
-        }catch(_e){
-          // non-geometry elements (e.g., rect in some browsers) — skip dash draw
-        }
+        }catch(_e){}
       });
-
-      // animate dashoffset to 0 with stagger
+    
+      // animate draw
       drawEls.forEach((el, i) => {
-        // only animate if dashoffset was set
         if (!el.style.strokeDashoffset) return;
         el.style.transition = "none";
         el.getBoundingClientRect();
-        el.style.transition = `stroke-dashoffset 760ms ease ${i*70}ms, opacity 500ms ease ${i*70}ms`;
+        el.style.transition = `stroke-dashoffset ${DRAW_MS}ms ease ${i*STAGGER_MS}ms, opacity 300ms ease ${i*STAGGER_MS}ms`;
         el.style.strokeDashoffset = "0";
       });
-
-      await sleep(760 + (drawEls.length-1)*70 + 140);
+    
+      await sleep(DRAW_MS + (drawEls.length-1)*STAGGER_MS + 60);
       if (skipped) return;
-
-      // SLIDE + WORDMARK IN
-      svg.style.animation = "introSlideLeft 650ms cubic-bezier(.2,.9,.25,1) forwards";
-      wordmark.style.animation = "introWordmarkIn 500ms ease 420ms forwards";
-
-      await sleep(720);
+    
+      // slide + reveal wordmark
+      svg.style.animation = `introSlideLeft ${SLIDE_MS}ms cubic-bezier(.2,.9,.25,1) forwards`;
+      wordmark.style.animation = `introWordmarkIn 360ms ease ${WORDMARK_DELAY}ms forwards`;
+    
+      await sleep(SLIDE_MS);
       if (skipped) return;
-
-      // TYPE TEXT
+    
+      // type
       const fullText = "EARTH’S ENIGMAS CO.";
       typeEl.textContent = "";
       typeEl.classList.add("typeCursor");
-
-      for (let i = 0; i < fullText.length; i++){
+    
+      for (let i=0;i<fullText.length;i++){
         if (skipped) return;
         typeEl.textContent += fullText[i];
-        await sleep(38);
+        await sleep(TYPE_MS);
       }
       typeEl.classList.remove("typeCursor");
-
-      // fade intro out, then boot
-      await sleep(380);
+    
+      await sleep(HOLD_MS);
       if (skipped) return;
-
-      // remove glow right before fading (optional, looks cleaner)
+    
+      // fade out overlay + boot
       drawEls.forEach(el => el.classList.remove("eecIntroGlow"));
-
       intro.setAttribute("aria-hidden","true");
-      await sleep(560);
+      await sleep(FADE_MS);
       await runBootSequence();
+    }
+
+    // =============================
+    // BOOT SEQUENCE (guarded)
+    // =============================
+    async function runBootSequence(){
+      if (bootStarted) return;
+      bootStarted = true;
+    
+      // ... keep the rest of your boot sequence exactly as-is ...
     }
 
     // =============================
