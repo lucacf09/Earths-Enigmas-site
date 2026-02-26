@@ -1,62 +1,524 @@
-<script>
-  // =============================
-  // DEV MODE
-  // =============================
-  const DEV_TOKEN = "ANOMALYCRISIS";
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Earth's Enigmas Co. — Records Terminal</title>
 
-  // Canonical dev order must be EXACT:
-  const DEV_ENTITY_ORDER = [
-    "ALIENI_04",
-    "JULIA_01",
-    "PRUDENCE_02",
-    "MINERVA_05",
-    "TANCY_01",
-    "VOLTA_01",
-    "NEMO_03"
-  ];
+  <style>
+    :root{
+      --bg:#07090c;
+      --panel:#0d1117;
+      --panel2:#0a0e13;
+      --ink:#e8eef7;
+      --muted:#9fb0c4;
+      --faint:#6d7c8f;
+      --line:#1c2532;
+      --accent:#74d3ff;
+      --warn:#ffcc66;
+      --danger:#ff6b6b;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --radius: 18px;
+    }
 
-  function isDevMode(){
-    const params = new URLSearchParams(window.location.search);
-    return params.get("dev") === DEV_TOKEN;
-  }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(116,211,255,.10), transparent 55%),
+                  radial-gradient(900px 600px at 70% 20%, rgba(182,255,138,.08), transparent 55%),
+                  radial-gradient(1000px 800px at 60% 95%, rgba(255,204,102,.06), transparent 55%),
+                  var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+      letter-spacing:.2px;
+    }
 
-  // =============================
-  // DATA
-  // =============================
-  // Public mode: only NEMO_03 interactable.
-  // Dev mode: ALL entities show decrypted names and are clickable.
-  const ENTITIES = [
-    { id:"EEC-ENT-0001", name:"ALIENI_04",   status:"EXPERIMENT PRESUMED FAILURE" },
-    { id:"EEC-ENT-0014", name:"JULIA_01",    status:"CONTAINMENT BREACHED - ACTIVE MONITORING" },
-    { id:"EEC-ENT-0029", name:"PRUDENCE_02", status:"CONTAINMENT BREACHED - MISSING" },
-    { id:"EEC-ENT-0033", name:"MINERVA_05",  status:"CONTAINMENT BREACHED - MISSING" },
-    { id:"EEC-ENT-0092", name:"TANCY_01",    status:"INITIATIVE TERMINATED / ARCHIVED - STATUS UNKNOWN POST-03/02/2021" },
-    { id:"EEC-ENT-0055", name:"VOLTA_01",    status:"CONTAINMENT BREACHED - ACTIVE SEARCH - EXTREME PRIORITY" },
-    { id:"EEC-ENT-0041", name:"NEMO_03",     status:"CONTAINMENT BREACHED - ACTIVE MONITORING - PRIORITISING" }
-  ];
+    /* prevent iOS long-press callout / drag */
+    .noCallout{
+      -webkit-touch-callout:none;
+      -webkit-user-select:none;
+      user-select:none;
+      -webkit-user-drag:none;
+      touch-action:manipulation;
+    }
 
-  const EVENT_LOG=[
-    {date:"2021-02-03", text:"Facility power fluctuation detected in Sub-Level B."},
-    {date:"2021-02-17", text:"Thermal signatures recorded in restricted corridor after hours."},
-    {date:"2021-03-01", text:"Security footage distortion between 02:11 and 02:16."},
-    {date:"2021-03-19", text:"Equipment calibration failure during routine diagnostics."},
-    {date:"2021-04-07", text:"Staff reported auditory anomaly in storage wing."},
-    {date:"2021-04-28", text:"Motion sensors triggered with no visible presence."},
-    {date:"2021-05-12", text:"Structural vibration detected without seismic activity."},
-    {spacer:true},
-    {alert:true, text:"UNUSUAL NOISE ACTIVITY REPORTED"},
-    {alert:true, text:"INITIAL INVESTIGATION YIELDED: NO RESULTS"},
-    {alert:true, text:"SOUND MONITORS RECORDED NOISES FROM THE BUILDING AT NIGHT"},
-    {alert:true, text:"WORKER'S SAFETY ADVISED UNTIL ENTITY IS LOCATED"},
-    {alert:true, text:"NEW INVESTIGATION SCHEDULE LOGGED"},
-    {spacer:true},
-    {alert:true, text:"CONTINUING TO MONITOR..."}
-  ];
+    /* Prevent any pre-animation text from showing */
+    .prehide{visibility:hidden}
 
-  // -----------------------------
-  // NEMO FILE
-  // -----------------------------
-  const NEMO_FILE_TEXT = `Project NEMO – Experimental Adaptation Initiative
+    header{
+      padding:40px 28px 18px;
+      border-bottom:1px solid rgba(28,37,50,.8);
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(7,9,12,.92), rgba(7,9,12,.62));
+    }
+
+    .mainLogo{display:flex;justify-content:center;align-items:center}
+    .mainLogo img{
+      height:240px;
+      width:auto;
+      object-fit:contain;
+      filter: drop-shadow(0 14px 40px rgba(0,0,0,.55));
+    }
+
+    main{max-width:1200px;margin:60px auto;padding:0 28px 120px}
+
+    .card{
+      background: linear-gradient(180deg, rgba(13,17,23,.92), rgba(10,14,19,.92));
+      border:1px solid rgba(28,37,50,.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:22px;
+      margin-bottom:28px;
+      overflow:hidden;
+    }
+
+    .title{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.8px;
+      text-transform:uppercase;
+      color:rgba(232,238,247,.88);
+      margin-bottom:18px;
+    }
+
+    .console{
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.7;
+      white-space:pre-wrap;
+      color:rgba(232,238,247,.92);
+    }
+
+    .notice{margin-top:18px;font-family:var(--mono);font-size:12px;color:rgba(232,238,247,.9)}
+    .phone{margin-top:6px;color:var(--accent);letter-spacing:2px;font-family:var(--mono)}
+
+    /* SPLIT LAYOUT */
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+    @media(max-width:900px){.split{grid-template-columns:1fr}}
+    .col{display:grid;gap:28px}
+
+    /* EVENT LOG */
+    .logList{font-family:var(--mono);font-size:12px;line-height:1.7}
+    .logRow{margin-bottom:10px}
+    .logDate{color:var(--accent)}
+    .alertLine{margin-top:16px;color:#cfd9e6}
+
+    /* ENTITY REGISTRY */
+    .entityList{list-style:none;padding:0;margin:0;display:grid;gap:12px;font-family:var(--mono);font-size:13px}
+    .entityItem{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid rgba(28,37,50,.9);
+      background: rgba(7,9,12,.45);
+      line-height:1.6;
+      opacity:1;
+    }
+    .entityItem.ledOn{opacity:0}
+    .entityItem:hover{border-color:rgba(116,211,255,.35)}
+    .entityId{color:var(--accent)}
+    .entityStatus{color:var(--muted)}
+
+    /* Entity status dots (reuse map dot style, but non-interactive) */
+    .entityNameLine{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .entityDot{
+      position:relative;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      flex:0 0 auto;
+      transform:none;
+      cursor:default;
+      pointer-events:none;
+      margin-top:6px;
+    }
+    .entityDot::before{
+      content:"";
+      position:absolute;
+      inset:-4px;
+      border-radius:50%;
+      background:inherit;
+      opacity:.6;
+      animation: dotPulse 2.2s ease-in-out infinite;
+      z-index:-1;
+    }
+    .entityDot::after{ content:none !important; }
+
+    /* MAP */
+    .mapWrap{
+      border:1px solid rgba(28,37,50,.9);
+      background: rgba(7,9,12,.38);
+      border-radius:14px;
+      padding:14px;
+    }
+    .mapContainer{position:relative;width:100%}
+    .mapImage{
+      width:100%;
+      display:block;
+      opacity:.9;
+      filter:contrast(115%) brightness(85%);
+      border-radius:12px;
+    }
+
+    .mapDot{
+      position:absolute;
+      width:6px;height:6px;
+      border-radius:50%;
+      transform:translate(-50%,-50%);
+      cursor:pointer;
+    }
+
+    .mapDot::before{
+      content:"";
+      position:absolute;
+      inset:-4px;
+      border-radius:50%;
+      background:inherit;
+      opacity:.6;
+      animation: dotPulse 2.2s ease-in-out infinite;
+      z-index:-1;
+    }
+    .mapDot:hover::before{animation-play-state:paused}
+
+    .dotRed{background:#ff2a2a;box-shadow:0 0 8px #ff2a2a}
+    .dotGreen{background:#00ff5a;box-shadow:0 0 8px #00ff5a}
+
+    .mapDot::after{
+      content:attr(data-name);
+      position:absolute;
+      bottom:140%;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(10,14,19,.95);
+      border:1px solid rgba(28,37,50,.95);
+      padding:4px 8px;
+      font-size:10px;
+      font-family:var(--mono);
+      color:var(--accent);
+      white-space:nowrap;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .15s ease;
+    }
+    .mapDot:hover::after{opacity:1}
+
+    @keyframes dotPulse{
+      0%{transform:scale(1);opacity:1}
+      50%{transform:scale(1.8);opacity:.35}
+      100%{transform:scale(1);opacity:1}
+    }
+
+    /* FOOTER */
+    footer{
+      position:relative;
+      max-width:1200px;
+      margin:0 auto;
+      padding:40px 28px 60px;
+    }
+    .footerText{font-family:var(--mono);font-size:11px;color:var(--muted)}
+    .prodFooterLogo{position:absolute;bottom:20px;right:28px;z-index:1}
+    .prodFooterLogo img{height:120px;width:auto;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5))}
+
+    /* =============================
+       BOOT ANIMATIONS
+       ============================= */
+    @keyframes ledFlicker {
+      0%   { opacity:0; filter:brightness(0) drop-shadow(0 0 0 rgba(0,0,0,0)); transform:translateY(-2px); }
+      6%   { opacity:1; filter:brightness(1.9) drop-shadow(0 0 16px rgba(116,211,255,.22)); }
+      10%  { opacity:.15; filter:brightness(.6); }
+      16%  { opacity:1; filter:brightness(2.2); }
+      22%  { opacity:.35; filter:brightness(.85); }
+      30%  { opacity:1; filter:brightness(1.4); }
+      100% { opacity:1; filter:brightness(1); transform:translateY(0); }
+    }
+    .ledOn{ animation: ledFlicker 700ms ease-out both; }
+    .delay300{animation-delay:300ms}
+
+    .typeCursor::after{content:"▍";margin-left:2px;opacity:1;animation: blink 700ms steps(1,end) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* =============================
+       SKIP BOOT BUTTON
+       ============================= */
+    .skipBootBtn{
+      position:fixed;
+      top:14px;
+      left:14px;
+      z-index:10000;
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.65);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    /* =============================
+       VIDEO / FILE MODALS
+       ============================= */
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      z-index:9999;
+    }
+    .modalOverlay[aria-hidden="false"]{display:flex}
+
+    .modal{
+      width:min(980px, 100%);
+      border-radius:18px;
+      border:1px solid rgba(28,37,50,.95);
+      background:linear-gradient(180deg, rgba(13,17,23,.96), rgba(10,14,19,.96));
+      box-shadow:0 30px 90px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(28,37,50,.9);
+    }
+    .modalTitle{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(232,238,247,.92);
+      letter-spacing:.7px;
+      text-transform:uppercase;
+    }
+    .modalClose{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.55);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+    }
+    .modalClose:hover{border-color:rgba(116,211,255,.35)}
+
+    .modalBody{position:relative; padding:14px;}
+    .modalBody video{width:100%;height:auto;display:block;border-radius:12px;background:#000}
+
+    .fileConsole{
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.7;
+      white-space:pre-wrap;
+      color:rgba(232,238,247,.92);
+      max-height:min(70vh, 560px);
+      overflow:auto;
+      padding-right:6px;
+    }
+    .fileConsole::-webkit-scrollbar{width:10px}
+    .fileConsole::-webkit-scrollbar-thumb{background:rgba(28,37,50,.9);border-radius:999px;border:2px solid rgba(7,9,12,.55)}
+
+    /* File modal action button (enter key) */
+    .fileActions{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      display:none;
+    }
+    .fileActions[aria-hidden="false"]{display:block}
+    .fileActionBtn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.65);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .ledOn{animation:none;opacity:1;transform:none;filter:none}
+      .typeCursor::after{animation:none}
+      .mapDot::before{animation:none}
+      .entityItem.ledOn{opacity:1 !important}
+    }
+
+    @media (max-width: 480px){
+      .mainLogo img{ height:180px; }
+      .prodFooterLogo img{ height:90px; }
+    }
+  </style>
+</head>
+
+<body>
+  <button class="skipBootBtn" id="skipBootBtn" type="button">skip animation</button>
+
+  <header>
+    <div class="mainLogo">
+      <img id="logoEEC" class="ledOn" src="eec-logo.png" alt="Earth's Enigmas Co. Logo">
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="title prehide" id="t_directive">Company Directive · 2021</div>
+      <div class="console prehide" id="t_console">
+Earth's Enigmas Co. operates as a global anomaly location and containment unit.
+
+Our objective is the identification, pursuit, and neutralization of emergent biological, atmospheric, and structural irregularities.
+
+All anomalous activity is to be documented, contained, and reclassified for public safety.
+      </div>
+      <div class="notice prehide" id="t_notice">Please report any anomalies found to the provided database.</div>
+      <div class="phone prehide" id="t_phone">—</div>
+    </div>
+
+    <div class="split">
+      <div class="card">
+        <div class="title prehide" id="t_eventTitle">Event Log · 2021 Internal Monitoring</div>
+        <div class="logList prehide" id="eventLog" aria-label="Event log"></div>
+      </div>
+
+      <div class="col">
+        <div class="card">
+          <div class="title prehide" id="t_registryTitle">Corrupted Entity Registry</div>
+          <ul class="entityList" id="entityList" aria-label="Entity registry"></ul>
+        </div>
+
+        <div class="card">
+          <div class="title prehide" id="t_mapTitle">Global Incident Map · 2021</div>
+          <div class="mapWrap prehide" id="mapWrap">
+            <div class="mapContainer" aria-label="Global incident map">
+              <img src="world-map.png" class="mapImage" alt="World map">
+
+              <!-- 12 total dots (1 green in the UK) -->
+              <span class="mapDot dotGreen" id="nemoDot" data-name="NEMO_03" style="left:49.6%; top:23.5%;"></span>
+
+              <span class="mapDot dotRed" data-name="██-001" style="left:22%; top:38%;"></span>
+              <span class="mapDot dotRed" data-name="██-014" style="left:30%; top:40%;"></span>
+              <span class="mapDot dotRed" data-name="██-029" style="left:34%; top:66%;"></span>
+              <span class="mapDot dotRed" data-name="██-033" style="left:60%; top:64%;"></span>
+              <span class="mapDot dotRed" data-name="██-041" style="left:67%; top:69%;"></span>
+              <span class="mapDot dotRed" data-name="██-055" style="left:73%; top:43%;"></span>
+              <span class="mapDot dotRed" data-name="██-067" style="left:70%; top:55%;"></span>
+              <span class="mapDot dotRed" data-name="██-072" style="left:79%; top:55%;"></span>
+              <span class="mapDot dotRed" data-name="██-088" style="left:85%; top:49%;"></span>
+              <span class="mapDot dotRed" data-name="██-091" style="left:90%; top:52%;"></span>
+              <span class="mapDot dotRed" data-name="██-103" style="left:87%; top:79%;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span class="footerText">© 2021 Earth's Enigmas Co. · Internal Records Terminal</span>
+    <div class="prodFooterLogo">
+      <img id="logoProd" class="ledOn delay300 noCallout" src="eec-logo2.png" alt="Production Studio Logo">
+    </div>
+  </footer>
+
+  <!-- Video Modal (green dot) -->
+  <div class="modalOverlay" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="NEMO_03 transmission">
+    <div class="modal">
+      <div class="modalTop">
+        <div class="modalTitle">NEMO_03 · RECOVERED FOOTAGE</div>
+        <button class="modalClose" id="videoClose" type="button">close</button>
+      </div>
+      <div class="modalBody">
+        <video id="nemoVideo" controls playsinline preload="metadata"></video>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Modal -->
+  <div class="modalOverlay" id="fileModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Entity file">
+    <div class="modal">
+      <div class="modalTop">
+        <div class="modalTitle" id="fileTitle">ENTITY FILE</div>
+        <button class="modalClose" id="fileClose" type="button">close</button>
+      </div>
+      <div class="modalBody">
+        <div class="fileConsole" id="fileBody"></div>
+
+        <div class="fileActions" id="fileActions" aria-hidden="true">
+          <button class="fileActionBtn" id="enterKeyBtn" type="button">enter encryption key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =============================
+    // DEV MODE
+    // =============================
+    const DEV_TOKEN = "ANOMALYCRISIS";
+
+    // Canonical dev order must be EXACT:
+    const DEV_ENTITY_ORDER = [
+      "ALIENI_04",
+      "JULIA_01",
+      "PRUDENCE_02",
+      "MINERVA_05",
+      "TANCY_01",
+      "VOLTA_01",
+      "NEMO_03"
+    ];
+
+    function isDevMode(){
+      const params = new URLSearchParams(window.location.search);
+      return params.get("dev") === DEV_TOKEN;
+    }
+
+    // =============================
+    // DATA
+    // =============================
+    const ENTITIES = [
+      { id:"EEC-ENT-0001", name:"ALIENI_04",   status:"EXPERIMENT PRESUMED FAILURE" },
+      { id:"EEC-ENT-0014", name:"JULIA_01",    status:"CONTAINMENT BREACHED - ACTIVE MONITORING" },
+      { id:"EEC-ENT-0029", name:"PRUDENCE_02", status:"CONTAINMENT BREACHED - MISSING" },
+      { id:"EEC-ENT-0033", name:"MINERVA_05",  status:"CONTAINMENT BREACHED - MISSING" },
+      { id:"EEC-ENT-0092", name:"TANCY_01",    status:"INITIATIVE TERMINATED / ARCHIVED - STATUS UNKNOWN POST-03/02/2021" },
+      { id:"EEC-ENT-0055", name:"VOLTA_01",    status:"CONTAINMENT BREACHED - ACTIVE SEARCH - EXTREME PRIORITY" },
+      { id:"EEC-ENT-0041", name:"NEMO_03",     status:"CONTAINMENT BREACHED - ACTIVE MONITORING - PRIORITISING" }
+    ];
+
+    const EVENT_LOG=[
+      {date:"2021-02-03", text:"Facility power fluctuation detected in Sub-Level B."},
+      {date:"2021-02-17", text:"Thermal signatures recorded in restricted corridor after hours."},
+      {date:"2021-03-01", text:"Security footage distortion between 02:11 and 02:16."},
+      {date:"2021-03-19", text:"Equipment calibration failure during routine diagnostics."},
+      {date:"2021-04-07", text:"Staff reported auditory anomaly in storage wing."},
+      {date:"2021-04-28", text:"Motion sensors triggered with no visible presence."},
+      {date:"2021-05-12", text:"Structural vibration detected without seismic activity."},
+      {spacer:true},
+      {alert:true, text:"UNUSUAL NOISE ACTIVITY REPORTED"},
+      {alert:true, text:"INITIAL INVESTIGATION YIELDED: NO RESULTS"},
+      {alert:true, text:"SOUND MONITORS RECORDED NOISES FROM THE BUILDING AT NIGHT"},
+      {alert:true, text:"WORKER'S SAFETY ADVISED UNTIL ENTITY IS LOCATED"},
+      {alert:true, text:"NEW INVESTIGATION SCHEDULE LOGGED"},
+      {spacer:true},
+      {alert:true, text:"CONTINUING TO MONITOR..."}
+    ];
+
+    // -----------------------------
+    // NEMO FILE
+    // -----------------------------
+    const NEMO_FILE_TEXT = `Project NEMO – Experimental Adaptation Initiative
 Creature File: NEMO_03
 Classification: Adaptive Mimetic Organism
 Status: ESCAPED
@@ -183,7 +645,7 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const NEMO_PREVIEW_TEXT = `Project NEMO – Experimental Adaptation Initiative
+    const NEMO_PREVIEW_TEXT = `Project NEMO – Experimental Adaptation Initiative
 Creature File: NEMO_03
 Classification: Adaptive Mimetic Organism
 Status: ██████
@@ -201,13 +663,13 @@ II. Notes
 
 ENTER DECRYPTION KEY TO ACCESS FULL FILE.`;
 
-  const NEMO_KEY = "olssv dvysk!";
-  const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
+    const NEMO_KEY = "olssv dvysk!";
+    const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
 
-  // =============================
-  // ENTITY FILES (DEV ONLY)
-  // =============================
-  const AILENI_FILE_TEXT = `Project AILENI – Regeneration Initiative
+    // =============================
+    // ENTITY FILES (DEV ONLY)
+    // =============================
+    const AILENI_FILE_TEXT = `Project AILENI – Regeneration Initiative
 
 Creature File: AILENI_04
 Classification: Hyper-Regenerative Organism
@@ -259,7 +721,7 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const JULIA_FILE_TEXT = `Project JULIA – De-Aging Initiative
+    const JULIA_FILE_TEXT = `Project JULIA – De-Aging Initiative
 
 Creature File: JULIA_01
 Classification: Chrono-Regressive Subject
@@ -298,7 +760,7 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const PRUDENCE_FILE_TEXT = `Project PRUDENCE – Foresight Initiative
+    const PRUDENCE_FILE_TEXT = `Project PRUDENCE – Foresight Initiative
 
 Creature File: PRUDENCE_02
 Classification: Predictive Cognition Subject
@@ -334,7 +796,7 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const MINERVA_FILE_TEXT = `Project MINERVA – Cordyceps Integration Initiative
+    const MINERVA_FILE_TEXT = `Project MINERVA – Cordyceps Integration Initiative
 
 Creature File: MINERVA_05
 Classification: Symbiotic Hybrid
@@ -370,7 +832,7 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const TANCY_FILE_TEXT = `Project TANCY – Immortality Initiative
+    const TANCY_FILE_TEXT = `Project TANCY – Immortality Initiative
 
 Creature File: TANCY_01
 Classification: Cellular Persistence Prototype
@@ -401,7 +863,7 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const VOLTA_FILE_TEXT = `Project VOLTA – Electromagnetic Adaptation Initiative
+    const VOLTA_FILE_TEXT = `Project VOLTA – Electromagnetic Adaptation Initiative
 
 Creature File: VOLTA_01
 Classification: Electromagnetic Organism
@@ -442,19 +904,19 @@ END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
 
-  const ENTITY_FILES = {
-    "ALIENI_04": AILENI_FILE_TEXT,
-    "JULIA_01": JULIA_FILE_TEXT,
-    "PRUDENCE_02": PRUDENCE_FILE_TEXT,
-    "MINERVA_05": MINERVA_FILE_TEXT,
-    "TANCY_01": TANCY_FILE_TEXT,
-    "VOLTA_01": VOLTA_FILE_TEXT,
-  };
+    const ENTITY_FILES = {
+      "ALIENI_04": AILENI_FILE_TEXT,
+      "JULIA_01": JULIA_FILE_TEXT,
+      "PRUDENCE_02": PRUDENCE_FILE_TEXT,
+      "MINERVA_05": MINERVA_FILE_TEXT,
+      "TANCY_01": TANCY_FILE_TEXT,
+      "VOLTA_01": VOLTA_FILE_TEXT,
+    };
 
-  // -----------------------------
-  // WIP FILES (fallback)
-  // -----------------------------
-  const WIP_FILE_TEXT = (codename) => `ENTITY FILE: ${codename}
+    // -----------------------------
+    // WIP FILES (fallback)
+    // -----------------------------
+    const WIP_FILE_TEXT = (codename) => `ENTITY FILE: ${codename}
 STATUS: WORK IN PROGRESS
 
 [DATA STREAM NOT YET INGESTED]
@@ -463,445 +925,450 @@ STATUS: WORK IN PROGRESS
 
 — EEC ARCHIVE TOOLING`;
 
-  // =============================
-  // HELPERS
-  // =============================
-  function glitch(text,intensity=0.4){
-    const glyphs=["█","▓","▒","░","#","/","_"];
-    let out="";
-    const s=String(text);
-    for(let i=0;i<s.length;i++){
-      const ch=s[i];
-      if (ch === " " || ch === "\n" || ch === "\t"){ out += ch; continue; }
-      if(Math.random()<intensity && ch!=="-") out+=glyphs[Math.floor(Math.random()*glyphs.length)];
-      else out+=ch;
-    }
-    return out;
-  }
-
-  function fullyCorruptLabel(label){
-    return String(label).replace(/[^\s]/g, "█");
-  }
-
-  function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-  function stashAndClear(el){
-    if (!el) return;
-    el.dataset.full = el.textContent;
-    el.textContent = "";
-  }
-
-  function reveal(el){
-    if (!el) return;
-    el.classList.remove("prehide");
-  }
-
-  let SKIP_BOOT = false;
-
-  function hideSkipButton(){
-    const btn = document.getElementById("skipBootBtn");
-    if (btn) btn.style.display = "none";
-  }
-
-  function typeFromData(el, speed=10){
-    const full = el?.dataset?.full ?? "";
-    if (!el) return Promise.resolve();
-    el.textContent = "";
-
-    if (SKIP_BOOT){
-      el.textContent = full;
-      el.classList.remove("typeCursor");
-      return Promise.resolve();
+    // =============================
+    // HELPERS
+    // =============================
+    function glitch(text,intensity=0.4){
+      const glyphs=["█","▓","▒","░","#","/","_"];
+      let out="";
+      const s=String(text);
+      for(let i=0;i<s.length;i++){
+        const ch=s[i];
+        if (ch === " " || ch === "\n" || ch === "\t"){ out += ch; continue; }
+        if(Math.random()<intensity && ch!=="-") out+=glyphs[Math.floor(Math.random()*glyphs.length)];
+        else out+=ch;
+      }
+      return out;
     }
 
-    el.classList.add("typeCursor");
-    return new Promise(resolve => {
-      let i=0;
-      const tick = () => {
-        if (SKIP_BOOT){
-          el.textContent = full;
-          el.classList.remove("typeCursor");
-          resolve();
-          return;
-        }
-        el.textContent += full[i] || "";
-        i++;
-        if(i >= full.length){
-          el.classList.remove("typeCursor");
-          resolve();
-          return;
-        }
-        setTimeout(tick, speed);
-      };
-      tick();
-    });
-  }
-
-  async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=8, msgSpeed=8){
-    await typeFromData(dateEl, dateSpeed);
-    if (sepEl) sepEl.textContent = " · ";
-    await typeFromData(msgEl, msgSpeed);
-  }
-
-  // =============================
-  // MODALS
-  // =============================
-  function setFileActions({ showEnterKey = false } = {}){
-    const actions = document.getElementById("fileActions");
-    if (!actions) return;
-    actions.setAttribute("aria-hidden", showEnterKey ? "false" : "true");
-  }
-
-  const VIDEO_SRC = "nemo.mp4";
-
-  function openNemoModal(){
-    const overlay = document.getElementById("videoModal");
-    const video = document.getElementById("nemoVideo");
-    if (!overlay || !video) return;
-
-    overlay.setAttribute("aria-hidden","false");
-    video.muted = false;
-    video.volume = 1;
-
-    if (!video.currentSrc){
-      video.src = VIDEO_SRC;
+    function fullyCorruptLabel(label){
+      return String(label).replace(/[^\s]/g, "█");
     }
-    try{ video.currentTime = 0; }catch(_e){}
 
-    const p = video.play();
-    if (p && typeof p.catch === "function") p.catch(() => {});
-  }
+    function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-  function closeNemoModal(){
-    const overlay = document.getElementById("videoModal");
-    const video = document.getElementById("nemoVideo");
-    if (!overlay || !video) return;
-
-    overlay.setAttribute("aria-hidden","true");
-    try{ video.pause(); }catch(_e){}
-  }
-
-  function openFileModal(title, body, { showEnterKey = false } = {}){
-    const overlay = document.getElementById("fileModal");
-    const t = document.getElementById("fileTitle");
-    const b = document.getElementById("fileBody");
-    if (!overlay || !t || !b) return;
-
-    t.textContent = title;
-    b.textContent = body;
-    setFileActions({ showEnterKey });
-    overlay.setAttribute("aria-hidden","false");
-  }
-
-  function closeFileModal(){
-    const overlay = document.getElementById("fileModal");
-    if (!overlay) return;
-    overlay.setAttribute("aria-hidden","true");
-    setFileActions({ showEnterKey:false });
-  }
-
-  // =============================
-  // NEMO UNLOCK (dev bypass)
-  // =============================
-  function isNemoUnlocked(){
-    if (isDevMode()) return true;
-    return localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
-  }
-
-  function unlockNemo(){
-    localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
-  }
-
-  function relockNemo(){
-    localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY);
-  }
-
-  function openEncryptedNemoFile(){
-    if (isNemoUnlocked()){
-      openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, { showEnterKey:false });
-      return;
+    function stashAndClear(el){
+      if (!el) return;
+      el.dataset.full = el.textContent;
+      el.textContent = "";
     }
-    openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT, { showEnterKey:true });
-  }
 
-  function revealOperatorKey(){
-    openFileModal("SYSTEM CACHE RECOVERY", [
-      "LOCAL HEADER CACHE RESTORED",
-      "—",
-      "RECOVERED CREDENTIAL:",
-      "DECRYPTION KEY: " + NEMO_KEY,
-      "—",
-      "NOTICE:",
-      "  This action has been logged.",
-    ].join("\n"), { showEnterKey:false });
-  }
+    function reveal(el){
+      if (!el) return;
+      el.classList.remove("prehide");
+    }
 
-  // =============================
-  // BUILD EVENT LOG DOM
-  // =============================
-  const phoneEl         = document.getElementById("t_phone");
-  const directiveTitle  = document.getElementById("t_directive");
-  const directiveBody   = document.getElementById("t_console");
-  const directiveNotice = document.getElementById("t_notice");
-  const eventTitle      = document.getElementById("t_eventTitle");
-  const registryTitle   = document.getElementById("t_registryTitle");
-  const mapTitle        = document.getElementById("t_mapTitle");
-  const mapWrap         = document.getElementById("mapWrap");
+    let SKIP_BOOT = false;
+    function hideSkipButton(){
+      const btn = document.getElementById("skipBootBtn");
+      if (btn) btn.style.display = "none";
+    }
 
-  stashAndClear(directiveTitle);
-  stashAndClear(directiveBody);
-  stashAndClear(directiveNotice);
+    function typeFromData(el, speed=10){
+      if (!el) return Promise.resolve();
+      const full = el.dataset.full ?? "";
+      el.textContent = "";
 
-  if (phoneEl){
-    phoneEl.dataset.full = glitch("+1-800-772-3419", 0.5);
-    phoneEl.textContent = "";
-  }
-
-  stashAndClear(eventTitle);
-  stashAndClear(registryTitle);
-  stashAndClear(mapTitle);
-
-  const eventLogEl = document.getElementById("eventLog");
-  const eventRows = [];
-
-  if (eventLogEl){
-    for(const row of EVENT_LOG){
-      if(row.spacer){
-        const spacer = document.createElement("div");
-        spacer.style.height = "10px";
-        eventLogEl.appendChild(spacer);
-        continue;
+      if (SKIP_BOOT){
+        el.textContent = full;
+        el.classList.remove("typeCursor");
+        return Promise.resolve();
       }
 
-      if(row.alert){
-        const div = document.createElement("div");
-        div.className = "alertLine";
-        const span = document.createElement("span");
-        span.textContent = row.text;
-        stashAndClear(span);
-        div.appendChild(span);
-        eventLogEl.appendChild(div);
-        eventRows.push({type:"alert", el: span});
-        continue;
-      }
-
-      const div = document.createElement("div");
-      div.className = "logRow";
-
-      const date = document.createElement("span");
-      date.className = "logDate";
-      date.textContent = row.date;
-      stashAndClear(date);
-
-      const sep = document.createElement("span");
-      sep.textContent = "";
-
-      const msg = document.createElement("span");
-      msg.textContent = row.text;
-      stashAndClear(msg);
-
-      div.appendChild(date);
-      div.appendChild(sep);
-      div.appendChild(msg);
-      eventLogEl.appendChild(div);
-
-      eventRows.push({type:"dated", dateEl: date, sepEl: sep, msgEl: msg});
-    }
-  }
-
-  // =============================
-  // ENTITY LIST
-  // =============================
-  function getEntitiesInDevOrder(){
-    const byName = new Map(ENTITIES.map(e => [e.name, e]));
-    return DEV_ENTITY_ORDER.map(name => byName.get(name)).filter(Boolean);
-  }
-
-  function renderEntitiesWithLed(){
-    const entityList = document.getElementById("entityList");
-    if (!entityList) return;
-
-    entityList.innerHTML = "";
-    const ordered = getEntitiesInDevOrder();
-
-    ordered.forEach((e, idx) => {
-      const li = document.createElement("li");
-      li.className = "entityItem ledOn";
-      li.style.animationDelay = `${120 + idx*80}ms`;
-
-      const isNemo = e.name === "NEMO_03";
-      const dev = isDevMode();
-
-      const displayName = dev ? e.name : (isNemo ? e.name : fullyCorruptLabel(e.name));
-      const dotClass = isNemo ? "dotGreen" : "dotRed";
-
-      li.innerHTML = `
-        <div class="entityNameLine">
-          <span class="entityDot ${dotClass}" aria-hidden="true"></span>
-          <div>
-            <div><span class="entityId">${e.id}</span> · ${displayName}</div>
-            <div class="entityStatus">STATUS: ${e.status}</div>
-          </div>
-        </div>
-      `;
-
-      const clickable = dev || isNemo;
-      li.style.cursor = clickable ? "pointer" : "default";
-
-      if (clickable){
-        li.addEventListener("click", () => {
-          if (isNemo){
-            openEncryptedNemoFile();
+      el.classList.add("typeCursor");
+      return new Promise(resolve => {
+        let i=0;
+        const tick = () => {
+          if (SKIP_BOOT){
+            el.textContent = full;
+            el.classList.remove("typeCursor");
+            resolve();
             return;
           }
-          if (!dev) return;
+          el.textContent += full[i] || "";
+          i++;
+          if(i >= full.length){
+            el.classList.remove("typeCursor");
+            resolve();
+            return;
+          }
+          setTimeout(tick, speed);
+        };
+        tick();
+      });
+    }
 
-          const text = ENTITY_FILES[e.name] || WIP_FILE_TEXT(e.name);
-          openFileModal(`${e.name} · ENTITY FILE`, text, { showEnterKey:false });
+    async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=8, msgSpeed=8){
+      await typeFromData(dateEl, dateSpeed);
+      if (sepEl) sepEl.textContent = " · ";
+      await typeFromData(msgEl, msgSpeed);
+    }
+
+    // =============================
+    // MODALS
+    // =============================
+    function setFileActions({ showEnterKey = false } = {}){
+      const actions = document.getElementById("fileActions");
+      if (!actions) return;
+      actions.setAttribute("aria-hidden", showEnterKey ? "false" : "true");
+    }
+
+    const VIDEO_SRC = "nemo.mp4";
+
+    function openNemoModal(){
+      const overlay = document.getElementById("videoModal");
+      const video = document.getElementById("nemoVideo");
+      if (!overlay || !video) return;
+
+      overlay.setAttribute("aria-hidden","false");
+      video.muted = false;
+      video.volume = 1;
+
+      if (!video.currentSrc){
+        video.src = VIDEO_SRC;
+      }
+      try{ video.currentTime = 0; }catch(_e){}
+
+      const p = video.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    }
+
+    function closeNemoModal(){
+      const overlay = document.getElementById("videoModal");
+      const video = document.getElementById("nemoVideo");
+      if (!overlay || !video) return;
+
+      overlay.setAttribute("aria-hidden","true");
+      try{ video.pause(); }catch(_e){}
+    }
+
+    function openFileModal(title, body, { showEnterKey = false } = {}){
+      const overlay = document.getElementById("fileModal");
+      const t = document.getElementById("fileTitle");
+      const b = document.getElementById("fileBody");
+      if (!overlay || !t || !b) return;
+
+      t.textContent = title;
+      b.textContent = body;
+      setFileActions({ showEnterKey });
+      overlay.setAttribute("aria-hidden","false");
+    }
+
+    function closeFileModal(){
+      const overlay = document.getElementById("fileModal");
+      if (!overlay) return;
+      overlay.setAttribute("aria-hidden","true");
+      setFileActions({ showEnterKey:false });
+    }
+
+    // =============================
+    // NEMO UNLOCK (dev bypass)
+    // =============================
+    function isNemoUnlocked(){
+      if (isDevMode()) return true;
+      return localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
+    }
+
+    function unlockNemo(){
+      localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
+    }
+
+    function relockNemo(){
+      localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY);
+    }
+
+    function openEncryptedNemoFile(){
+      if (isNemoUnlocked()){
+        openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, { showEnterKey:false });
+        return;
+      }
+      openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT, { showEnterKey:true });
+    }
+
+    function revealOperatorKey(){
+      openFileModal("SYSTEM CACHE RECOVERY", [
+        "LOCAL HEADER CACHE RESTORED",
+        "—",
+        "RECOVERED CREDENTIAL:",
+        "DECRYPTION KEY: " + NEMO_KEY,
+        "—",
+        "NOTICE:",
+        "  This action has been logged.",
+      ].join("\n"), { showEnterKey:false });
+    }
+
+    // =============================
+    // BUILD EVENT LOG DOM
+    // =============================
+    const phoneEl         = document.getElementById("t_phone");
+    const directiveTitle  = document.getElementById("t_directive");
+    const directiveBody   = document.getElementById("t_console");
+    const directiveNotice = document.getElementById("t_notice");
+    const eventTitle      = document.getElementById("t_eventTitle");
+    const registryTitle   = document.getElementById("t_registryTitle");
+    const mapTitle        = document.getElementById("t_mapTitle");
+    const mapWrap         = document.getElementById("mapWrap");
+
+    stashAndClear(directiveTitle);
+    stashAndClear(directiveBody);
+    stashAndClear(directiveNotice);
+
+    if (phoneEl){
+      phoneEl.dataset.full = glitch("+1-800-772-3419", 0.5);
+      phoneEl.textContent = "";
+    }
+
+    stashAndClear(eventTitle);
+    stashAndClear(registryTitle);
+    stashAndClear(mapTitle);
+
+    const eventLogEl = document.getElementById("eventLog");
+    const eventRows = [];
+
+    if (eventLogEl){
+      for(const row of EVENT_LOG){
+        if(row.spacer){
+          const spacer = document.createElement("div");
+          spacer.style.height = "10px";
+          eventLogEl.appendChild(spacer);
+          continue;
+        }
+
+        if(row.alert){
+          const div = document.createElement("div");
+          div.className = "alertLine";
+          const span = document.createElement("span");
+          span.textContent = row.text;
+          stashAndClear(span);
+          div.appendChild(span);
+          eventLogEl.appendChild(div);
+          eventRows.push({type:"alert", el: span});
+          continue;
+        }
+
+        const div = document.createElement("div");
+        div.className = "logRow";
+
+        const date = document.createElement("span");
+        date.className = "logDate";
+        date.textContent = row.date;
+        stashAndClear(date);
+
+        const sep = document.createElement("span");
+        sep.textContent = "";
+
+        const msg = document.createElement("span");
+        msg.textContent = row.text;
+        stashAndClear(msg);
+
+        div.appendChild(date);
+        div.appendChild(sep);
+        div.appendChild(msg);
+        eventLogEl.appendChild(div);
+
+        eventRows.push({type:"dated", dateEl: date, sepEl: sep, msgEl: msg});
+      }
+    }
+
+    // =============================
+    // ENTITY LIST
+    // =============================
+    function getEntitiesInDevOrder(){
+      const byName = new Map(ENTITIES.map(e => [e.name, e]));
+      return DEV_ENTITY_ORDER.map(name => byName.get(name)).filter(Boolean);
+    }
+
+    function renderEntitiesWithLed(){
+      const entityList = document.getElementById("entityList");
+      if (!entityList) return;
+
+      entityList.innerHTML = "";
+      const ordered = getEntitiesInDevOrder();
+
+      ordered.forEach((e, idx) => {
+        const li = document.createElement("li");
+        li.className = "entityItem ledOn";
+        li.style.animationDelay = `${120 + idx*80}ms`;
+
+        const isNemo = e.name === "NEMO_03";
+        const dev = isDevMode();
+
+        const displayName = dev ? e.name : (isNemo ? e.name : fullyCorruptLabel(e.name));
+        const dotClass = isNemo ? "dotGreen" : "dotRed";
+
+        li.innerHTML = `
+          <div class="entityNameLine">
+            <span class="entityDot ${dotClass}" aria-hidden="true"></span>
+            <div>
+              <div><span class="entityId">${e.id}</span> · ${displayName}</div>
+              <div class="entityStatus">STATUS: ${e.status}</div>
+            </div>
+          </div>
+        `;
+
+        const clickable = dev || isNemo;
+        li.style.cursor = clickable ? "pointer" : "default";
+
+        if (clickable){
+          li.addEventListener("click", () => {
+            if (isNemo){
+              openEncryptedNemoFile();
+              return;
+            }
+            if (!dev) return;
+
+            const text = ENTITY_FILES[e.name] || WIP_FILE_TEXT(e.name);
+            openFileModal(`${e.name} · ENTITY FILE`, text, { showEnterKey:false });
+          });
+        }
+
+        entityList.appendChild(li);
+      });
+    }
+
+    // =============================
+    // BOOT SEQUENCE
+    // =============================
+    window.addEventListener("DOMContentLoaded", async () => {
+      await sleep(220);
+
+      // Skip animation
+      const skipBtn = document.getElementById("skipBootBtn");
+      if (skipBtn){
+        skipBtn.addEventListener("click", () => {
+          SKIP_BOOT = true;
+          hideSkipButton();
         });
       }
 
-      entityList.appendChild(li);
-    });
-  }
+      // Directive
+      reveal(directiveTitle);
+      await typeFromData(directiveTitle, 9);
 
-  // =============================
-  // BOOT SEQUENCE
-  // =============================
-  window.addEventListener("DOMContentLoaded", async () => {
-    await sleep(220);
+      reveal(directiveBody);
+      await typeFromData(directiveBody, 7);
 
-    // Skip animation
-    const skipBtn = document.getElementById("skipBootBtn");
-    if (skipBtn){
-      skipBtn.addEventListener("click", () => {
-        SKIP_BOOT = true;
-        hideSkipButton();
-      });
-    }
+      reveal(directiveNotice);
+      await typeFromData(directiveNotice, 9);
 
-    // Directive
-    reveal(directiveTitle);
-    await typeFromData(directiveTitle, 9);
+      reveal(phoneEl);
+      await typeFromData(phoneEl, 12);
 
-    reveal(directiveBody);
-    await typeFromData(directiveBody, 7);
+      // Event log
+      await sleep(110);
+      reveal(eventTitle);
+      await typeFromData(eventTitle, 9);
 
-    reveal(directiveNotice);
-    await typeFromData(directiveNotice, 9);
-
-    reveal(phoneEl);
-    await typeFromData(phoneEl, 12);
-
-    // Event log
-    await sleep(110);
-    reveal(eventTitle);
-    await typeFromData(eventTitle, 9);
-
-    reveal(eventLogEl);
-    for(const row of eventRows){
-      if(row.type === "alert") await typeFromData(row.el, 8);
-      else await typeLineWithDate(row.dateEl, row.sepEl, row.msgEl, 8, 8);
-    }
-
-    // Registry title + entities
-    await sleep(140);
-    reveal(registryTitle);
-    await typeFromData(registryTitle, 9);
-    renderEntitiesWithLed();
-
-    // Map
-    await sleep(140);
-    reveal(mapTitle);
-    await typeFromData(mapTitle, 9);
-    reveal(mapWrap);
-    if (mapWrap) mapWrap.classList.add("ledOn");
-
-    // Green dot opens VIDEO
-    const nemoDot = document.getElementById("nemoDot");
-    if (nemoDot){
-      nemoDot.addEventListener("click", () => openNemoModal());
-    }
-
-    // Modal handlers
-    const vClose = document.getElementById("videoClose");
-    const vOverlay = document.getElementById("videoModal");
-    if (vClose) vClose.addEventListener("click", closeNemoModal);
-    if (vOverlay) vOverlay.addEventListener("click", (e) => { if (e.target === vOverlay) closeNemoModal(); });
-
-    const fClose = document.getElementById("fileClose");
-    const fOverlay = document.getElementById("fileModal");
-    if (fClose) fClose.addEventListener("click", closeFileModal);
-    if (fOverlay) fOverlay.addEventListener("click", (e) => { if (e.target === fOverlay) closeFileModal(); });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape"){
-        closeNemoModal();
-        closeFileModal();
+      reveal(eventLogEl);
+      for(const row of eventRows){
+        if(row.type === "alert") await typeFromData(row.el, 8);
+        else await typeLineWithDate(row.dateEl, row.sepEl, row.msgEl, 8, 8);
       }
-    });
 
-    // Enter key button (inside file modal)
-    const enterKeyBtn = document.getElementById("enterKeyBtn");
-    if (enterKeyBtn){
-      enterKeyBtn.addEventListener("click", () => {
-        const key = prompt("DECRYPTION KEY REQUIRED:");
-        if (key === null) return;
+      // Registry title + entities
+      await sleep(140);
+      reveal(registryTitle);
+      await typeFromData(registryTitle, 9);
+      renderEntitiesWithLed();
 
-        if (key.trim() === NEMO_KEY){
-          unlockNemo();
-          openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, { showEnterKey:false });
-        } else {
-          openFileModal("NEMO_03 · ACCESS DENIED", [
-            "CLEARANCE: FAILED",
-            "KEY STATUS: INVALID",
-            "NOTICE:",
-            "  Repeated attempts will be logged."
-          ].join("\n"), { showEnterKey:true });
+      // Map
+      await sleep(140);
+      reveal(mapTitle);
+      await typeFromData(mapTitle, 9);
+      reveal(mapWrap);
+      if (mapWrap) mapWrap.classList.add("ledOn");
+
+      // Green dot opens VIDEO
+      const nemoDot = document.getElementById("nemoDot");
+      if (nemoDot){
+        nemoDot.addEventListener("click", () => openNemoModal());
+      }
+
+      // Modal handlers
+      const vClose = document.getElementById("videoClose");
+      const vOverlay = document.getElementById("videoModal");
+      if (vClose) vClose.addEventListener("click", closeNemoModal);
+      if (vOverlay) vOverlay.addEventListener("click", (e) => { if (e.target === vOverlay) closeNemoModal(); });
+
+      const fClose = document.getElementById("fileClose");
+      const fOverlay = document.getElementById("fileModal");
+      if (fClose) fClose.addEventListener("click", closeFileModal);
+      if (fOverlay) fOverlay.addEventListener("click", (e) => { if (e.target === fOverlay) closeFileModal(); });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape"){
+          closeNemoModal();
+          closeFileModal();
         }
       });
-    }
 
-    // Operator key reveal:
-    // - Desktop: Shift+click production logo
-    // - Mobile: 7 taps within 3 seconds
-    const prodLogo = document.getElementById("logoProd");
-    if (prodLogo){
-      prodLogo.addEventListener("click", (e) => {
-        if (e.shiftKey) revealOperatorKey();
-      });
+      // Enter key button (inside file modal)
+      const enterKeyBtn = document.getElementById("enterKeyBtn");
+      if (enterKeyBtn){
+        enterKeyBtn.addEventListener("click", () => {
+          const key = prompt("DECRYPTION KEY REQUIRED:");
+          if (key === null) return;
 
-      let tapCount = 0;
-      let tapTimer = null;
-      const TAP_THRESHOLD = 3;
-      const TAP_WINDOW_MS = 3000;
+          if (key.trim() === NEMO_KEY){
+            unlockNemo();
+            openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, { showEnterKey:false });
+          } else {
+            openFileModal("NEMO_03 · ACCESS DENIED", [
+              "CLEARANCE: FAILED",
+              "KEY STATUS: INVALID",
+              "NOTICE:",
+              "  Repeated attempts will be logged."
+            ].join("\n"), { showEnterKey:true });
+          }
+        });
+      }
 
-      const registerTap = () => {
-        tapCount++;
-        if (tapCount === 1){
-          tapTimer = setTimeout(() => {
+      // Operator key reveal:
+      // - Desktop: Shift+click production logo
+      // - Mobile: 7 taps within 3 seconds
+      const prodLogo = document.getElementById("logoProd");
+      if (prodLogo){
+        prodLogo.addEventListener("click", (e) => {
+          if (e.shiftKey) revealOperatorKey();
+        });
+
+        let tapCount = 0;
+        let tapTimer = null;
+        const TAP_THRESHOLD = 7;
+        const TAP_WINDOW_MS = 3000;
+
+        const registerTap = () => {
+          tapCount++;
+
+          if (tapCount === 1){
+            tapTimer = setTimeout(() => {
+              tapCount = 0;
+              tapTimer = null;
+            }, TAP_WINDOW_MS);
+          }
+
+          if (tapCount >= TAP_THRESHOLD){
+            if (tapTimer) clearTimeout(tapTimer);
             tapCount = 0;
             tapTimer = null;
-          }, TAP_WINDOW_MS);
-        }
-        if (tapCount >= TAP_THRESHOLD){
-          if (tapTimer) clearTimeout(tapTimer);
-          tapCount = 0;
-          tapTimer = null;
-          revealOperatorKey();
-        }
-      };
+            revealOperatorKey();
+          }
+        };
 
-      prodLogo.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        registerTap();
-      }, { passive:false });
-    }
+        prodLogo.addEventListener("touchend", (e) => {
+          e.preventDefault();
+          registerTap();
+        }, { passive:false });
+      }
 
-    hideSkipButton();
+      // Hide skip button automatically once boot finishes
+      hideSkipButton();
 
-    if (isDevMode()){
-      document.title = "DEV — " + document.title;
-    }
-  });
-</script>
+      // Optional: make it obvious in the tab when dev mode is active
+      if (isDevMode()){
+        document.title = "DEV — " + document.title;
+      }
+    });
+  </script>
+</body>
+</html>
