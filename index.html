@@ -37,7 +37,6 @@
       letter-spacing:.2px;
     }
 
-    /* prevent iOS long-press callout / drag */
     .noCallout{
       -webkit-touch-callout:none;
       -webkit-user-select:none;
@@ -46,7 +45,6 @@
       touch-action:manipulation;
     }
 
-    /* Prevent any pre-animation text from showing */
     .prehide{visibility:hidden}
 
     header{
@@ -96,18 +94,15 @@
     .notice{margin-top:18px;font-family:var(--mono);font-size:12px;color:rgba(232,238,247,.9)}
     .phone{margin-top:6px;color:var(--accent);letter-spacing:2px;font-family:var(--mono)}
 
-    /* SPLIT LAYOUT */
     .split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
     @media(max-width:900px){.split{grid-template-columns:1fr}}
     .col{display:grid;gap:28px}
 
-    /* EVENT LOG */
     .logList{font-family:var(--mono);font-size:12px;line-height:1.7}
     .logRow{margin-bottom:10px}
     .logDate{color:var(--accent)}
     .alertLine{margin-top:16px;color:#cfd9e6}
 
-    /* ENTITY REGISTRY */
     .entityList{list-style:none;padding:0;margin:0;display:grid;gap:12px;font-family:var(--mono);font-size:13px}
     .entityItem{
       padding:14px;
@@ -122,11 +117,16 @@
     .entityId{color:var(--accent)}
     .entityStatus{color:var(--muted)}
 
-    /* Entity status dots (reuse map dot style, but non-interactive) */
-    .entityNameLine{display:flex;align-items:flex-start;gap:10px}
+    .entityNameLine{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
     .entityDot{
       position:relative;
-      width:6px;height:6px;border-radius:50%;
+      width:6px;
+      height:6px;
+      border-radius:50%;
       flex:0 0 auto;
       transform:none;
       cursor:default;
@@ -143,9 +143,8 @@
       animation: dotPulse 2.2s ease-in-out infinite;
       z-index:-1;
     }
-    .entityDot::after{content:none !important}
+    .entityDot::after{ content:none !important; }
 
-    /* MAP */
     .mapWrap{
       border:1px solid rgba(28,37,50,.9);
       background: rgba(7,9,12,.38);
@@ -163,10 +162,12 @@
 
     .mapDot{
       position:absolute;
-      width:6px;height:6px;border-radius:50%;
+      width:6px;height:6px;
+      border-radius:50%;
       transform:translate(-50%,-50%);
       cursor:pointer;
     }
+
     .mapDot::before{
       content:"";
       position:absolute;
@@ -207,7 +208,6 @@
       100%{transform:scale(1);opacity:1}
     }
 
-    /* FOOTER */
     footer{
       position:relative;
       max-width:1200px;
@@ -218,9 +218,6 @@
     .prodFooterLogo{position:absolute;bottom:20px;right:28px;z-index:1}
     .prodFooterLogo img{height:120px;width:auto;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5))}
 
-    /* =============================
-       BOOT ANIMATIONS
-       ============================= */
     @keyframes ledFlicker {
       0%   { opacity:0; filter:brightness(0) drop-shadow(0 0 0 rgba(0,0,0,0)); transform:translateY(-2px); }
       6%   { opacity:1; filter:brightness(1.9) drop-shadow(0 0 16px rgba(116,211,255,.22)); }
@@ -250,7 +247,7 @@
         radial-gradient(900px 600px at 50% 40%, rgba(116,211,255,.12), transparent 60%),
         var(--bg);
       opacity:1;
-      transition: opacity .55s ease, visibility .55s ease;
+      transition: opacity .35s ease, visibility .35s ease;
     }
     .introOverlay[aria-hidden="true"]{
       opacity:0;
@@ -268,14 +265,25 @@
       width:min(980px, 92vw);
     }
     .introGlobe{
-      width:min(220px, 44vw);
+      width:min(240px, 48vw);
       height:auto;
       overflow:visible;
       filter: drop-shadow(0 18px 50px rgba(0,0,0,.65));
       transform: translateX(0);
     }
-    /* ensure loaded svg behaves */
-    #introGlobeWrap svg{display:block;width:100%;height:auto}
+
+    /* Ensure loaded SVG renders and is visible */
+    #introGlobeWrap svg{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    /* Stroke glow */
+    .eecIntroGlow{
+      filter: drop-shadow(0 0 6px rgba(116,211,255,.55))
+              drop-shadow(0 0 14px rgba(116,211,255,.25));
+    }
 
     .introWordmark{
       width:min(620px, 70vw);
@@ -316,17 +324,13 @@
       color:rgba(232,238,247,.92);
       cursor:pointer;
     }
-    @keyframes introSlideLeft{ to{ transform: translateX(-160px); } }
-    @keyframes introWordmarkIn{ to{ opacity:1; transform: translateX(0); } }
-    @media (max-width: 640px){
-      @keyframes introSlideLeft{ to{ transform: translateX(-90px);} }
-      .introType{ font-size:14px; letter-spacing:3px; }
-    }
 
-    /* stroke glow (applied during draw) */
-    .eecIntroGlow{
-      filter: drop-shadow(0 0 6px rgba(116,211,255,.55))
-              drop-shadow(0 0 14px rgba(116,211,255,.22));
+    @keyframes introSlideLeft{ to{ transform: translateX(-150px); } }
+    @keyframes introWordmarkIn{ to{ opacity:1; transform: translateX(0); } }
+
+    @media (max-width: 640px){
+      @keyframes introSlideLeft{ to{ transform: translateX(-85px);} }
+      .introType{ font-size:14px; letter-spacing:3px; }
     }
 
     /* =============================
@@ -349,7 +353,7 @@
     }
 
     /* =============================
-       VIDEO / FILE MODALS
+       MODALS
        ============================= */
     .modalOverlay{
       position:fixed;
@@ -438,7 +442,6 @@
       .typeCursor::after{animation:none}
       .mapDot::before{animation:none}
       .entityItem.ledOn{opacity:1 !important}
-      .eecIntroGlow{filter:none}
     }
 
     @media (max-width: 480px){
@@ -452,7 +455,7 @@
   <!-- INTRO OVERLAY -->
   <div id="introOverlay" class="introOverlay" aria-hidden="false">
     <div class="introStage" aria-label="Intro animation">
-      <div id="introGlobeWrap" class="introGlobe"></div>
+      <div id="introGlobeWrap" class="introGlobe" aria-label="EEC logo animation area"></div>
 
       <div class="introWordmark">
         <div id="introType" class="introType"></div>
@@ -1030,10 +1033,8 @@ STATUS: WORK IN PROGRESS
       }
       return out;
     }
-    function fullyCorruptLabel(label){
-      return String(label).replace(/[^\s]/g, "█");
-    }
-    function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+    function fullyCorruptLabel(label){ return String(label).replace(/[^\s]/g, "█"); }
+    function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
     function stashAndClear(el){
       if (!el) return;
@@ -1108,6 +1109,7 @@ STATUS: WORK IN PROGRESS
       if (!overlay || !video) return;
 
       overlay.setAttribute("aria-hidden","false");
+
       video.muted = false;
       video.volume = 1;
       if (!video.currentSrc) video.src = VIDEO_SRC;
@@ -1176,7 +1178,7 @@ STATUS: WORK IN PROGRESS
     }
 
     // =============================
-    // BUILD EVENT LOG DOM (stash text)
+    // STASH TEXT FOR TYPEWRITER
     // =============================
     const phoneEl         = document.getElementById("t_phone");
     const directiveTitle  = document.getElementById("t_directive");
@@ -1202,7 +1204,6 @@ STATUS: WORK IN PROGRESS
 
     const eventLogEl = document.getElementById("eventLog");
     const eventRows = [];
-
     if (eventLogEl){
       for(const row of EVENT_LOG){
         if(row.spacer){
@@ -1294,7 +1295,6 @@ STATUS: WORK IN PROGRESS
               return;
             }
             if (!dev) return;
-
             const text = ENTITY_FILES[e.name] || WIP_FILE_TEXT(e.name);
             openFileModal(`${e.name} · ENTITY FILE`, text, { showEnterKey:false });
           });
@@ -1304,202 +1304,176 @@ STATUS: WORK IN PROGRESS
       });
     }
 
-// =============================
-// INTRO -> BOOT (FIXED + SHORTER)
-// =============================
-    async function loadIntroSVG({ timeoutMs = 1200 } = {}){
+    // =============================
+    // INTRO (SVG DRAW) -> BOOT
+    // =============================
+    async function loadInlineSVG(url, { timeoutMs = 1200 } = {}){
       const wrap = document.getElementById("introGlobeWrap");
       if (!wrap) return null;
-    
-      // show a tiny loader so overlay isn't "empty"
-      wrap.innerHTML = `<div style="font-family:var(--mono);font-size:12px;color:rgba(232,238,247,.7);letter-spacing:2px;">
-        LOADING MARK…
-      </div>`;
-    
+
       const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), timeoutMs);
-    
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+
       try{
-        const res = await fetch("EEC-logo.svg", { cache: "no-cache", signal: controller.signal });
-        clearTimeout(t);
-    
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const res = await fetch(url, { signal: controller.signal, cache: "no-store" });
+        clearTimeout(timer);
+
+        if (!res.ok) throw new Error("HTTP " + res.status);
         const svgText = await res.text();
-    
+
         wrap.innerHTML = svgText;
-    
+
         const svg = wrap.querySelector("svg");
-        if (!svg) throw new Error("No <svg> found in file");
-    
+        if (!svg) return null;
+
+        // Make it responsive
         svg.removeAttribute("width");
         svg.removeAttribute("height");
         svg.style.width = "100%";
         svg.style.height = "auto";
         svg.style.display = "block";
-    
+
+        // Don’t let SVG internal styles hide things
+        svg.style.overflow = "visible";
+
         return svg;
       }catch(e){
-        clearTimeout(t);
-        console.error("Intro SVG load failed:", e);
-        wrap.innerHTML = ""; // clean up loader
+        clearTimeout(timer);
+        // fail silently into boot
         return null;
       }
     }
-    
-    function getDrawableEls(svg){
-      const candidates = svg.querySelectorAll("path, circle, line, ellipse, polyline, polygon, rect");
-    
-      const out = [];
-      candidates.forEach(el => {
-        if (el.closest("text")) return;
-    
-        const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
-        const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
-    
-        const strokeBased = strokeAttr && strokeAttr !== "none";
-        const fillNone = fillAttr === "none";
-    
-        if (strokeBased || fillNone) out.push(el);
-      });
-    
-      if (out.length === 0) {
-        svg.querySelectorAll("path, circle, line, ellipse, polyline, polygon").forEach(el => out.push(el));
-      }
-    
-      return out;
-    }
-    
-    let bootStarted = false;
-    
+
     async function runIntroThenBoot(){
       const intro = document.getElementById("introOverlay");
       const wordmark = document.querySelector(".introWordmark");
       const typeEl = document.getElementById("introType");
       const skip = document.getElementById("introSkip");
-    
+
+      // If intro elements missing, just boot
       if (!intro || !wordmark || !typeEl){
         await runBootSequence();
         return;
       }
-    
+
       let skipped = false;
-    
       const endNow = async () => {
         if (skipped) return;
         skipped = true;
         intro.setAttribute("aria-hidden","true");
-        await sleep(40);
+        await sleep(20);
         await runBootSequence();
       };
-    
-      if (skip) skip.addEventListener("click", endNow);
-    
-      // Keep overlay visible while loading
-      intro.setAttribute("aria-hidden","false");
-    
-      const svg = await loadIntroSVG({ timeoutMs: 1200 });
-    
-      // If it fails, don't hang — just boot
+
+      if (skip) skip.addEventListener("click", endNow, { once:true });
+
+      // Load your SVG file here:
+      const svg = await loadInlineSVG("EEC-logo.svg", { timeoutMs: 1400 });
+
+      // If SVG can’t be loaded, skip intro quickly (still looks intentional)
       if (!svg){
+        await sleep(120);
         await endNow();
         return;
       }
-    
-      // SHORTER TIMINGS
-      const DRAW_MS = 520;
-      const STAGGER_MS = 40;
-      const SLIDE_MS = 520;
-      const WORDMARK_DELAY = 220;
-      const TYPE_MS = 26;     // per character
-      const HOLD_MS = 180;
-      const FADE_MS = 420;
-    
-      const drawEls = getDrawableEls(svg);
-    
-      // prep dash + glow
-      drawEls.forEach(el => {
-        el.classList.add("eecIntroGlow");
-    
-        // Only enforce stroke if it's clearly linework
+
+      // IMPORTANT:
+      // We animate ALL stroke-capable elements. This “will work” even if your globe
+      // isn't tagged, but for PERFECT matching later you can tag globe lines with a class
+      // and change selector to: svg.querySelectorAll(".globeLine")
+      const candidates = Array.from(svg.querySelectorAll("path, line, polyline, polygon, circle, ellipse, rect"));
+
+      // Force-stroke + dash setup (inline styles override SVG internal <style>)
+      const animEls = candidates.filter(el => {
+        const tag = el.tagName.toLowerCase();
+        if (["path","line","polyline","circle","ellipse"].includes(tag)) return true;
+        // For rect/polygon, only if already fill=none
         const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
-        const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
-        const shouldBeStroke = strokeAttr !== "none" || fillAttr === "none";
-    
-        if (shouldBeStroke){
-          if (!el.getAttribute("stroke")) el.setAttribute("stroke", "rgba(232,238,247,.92)");
-          if (!el.getAttribute("stroke-width")) el.setAttribute("stroke-width", "2.2");
-          el.setAttribute("stroke-linecap", "round");
-          el.setAttribute("stroke-linejoin", "round");
-        }
-    
+        return fillAttr === "none";
+      });
+
+      // If the SVG has NO animatable elements, just fade out and boot.
+      if (!animEls.length){
+        await sleep(180);
+        intro.setAttribute("aria-hidden","true");
+        await sleep(220);
+        await runBootSequence();
+        return;
+      }
+
+      // Start hidden by dashoffset, but still visible enough (stroke exists)
+      animEls.forEach(el => {
+        el.classList.add("eecIntroGlow");
+
+        el.style.fill = "none";
+        el.style.stroke = "rgba(232,238,247,.92)";
+        el.style.strokeWidth = "2.2";
+        el.style.strokeLinecap = "round";
+        el.style.strokeLinejoin = "round";
+        el.style.vectorEffect = "non-scaling-stroke";
+
         try{
           const len = el.getTotalLength();
           const dash = Math.ceil(len + 2);
           el.style.strokeDasharray = String(dash);
           el.style.strokeDashoffset = String(dash);
           el.style.opacity = ".95";
-        }catch(_e){}
+        }catch(_e){
+          // ignore elements that can't compute length
+        }
       });
-    
-      // animate draw
-      drawEls.forEach((el, i) => {
+
+      // DRAW (shorter)
+      const DRAW_MS = 520;
+      const STAGGER_MS = 38;
+
+      animEls.forEach((el, i) => {
         if (!el.style.strokeDashoffset) return;
         el.style.transition = "none";
-        el.getBoundingClientRect();
-        el.style.transition = `stroke-dashoffset ${DRAW_MS}ms ease ${i*STAGGER_MS}ms, opacity 300ms ease ${i*STAGGER_MS}ms`;
+        el.getBoundingClientRect(); // reflow
+        el.style.transition = `stroke-dashoffset ${DRAW_MS}ms ease ${i*STAGGER_MS}ms`;
         el.style.strokeDashoffset = "0";
       });
-    
-      await sleep(DRAW_MS + (drawEls.length-1)*STAGGER_MS + 60);
+
+      await sleep(DRAW_MS + (animEls.length - 1) * STAGGER_MS + 90);
       if (skipped) return;
-    
-      // slide + reveal wordmark
-      svg.style.animation = `introSlideLeft ${SLIDE_MS}ms cubic-bezier(.2,.9,.25,1) forwards`;
-      wordmark.style.animation = `introWordmarkIn 360ms ease ${WORDMARK_DELAY}ms forwards`;
-    
-      await sleep(SLIDE_MS);
+
+      // Slide SVG left + reveal wordmark
+      const globeWrap = document.getElementById("introGlobeWrap");
+      if (globeWrap){
+        globeWrap.style.animation = "introSlideLeft 520ms cubic-bezier(.2,.9,.25,1) forwards";
+      }
+      wordmark.style.animation = "introWordmarkIn 420ms ease 220ms forwards";
+
+      await sleep(620);
       if (skipped) return;
-    
-      // type
+
+      // Type the wordmark
       const fullText = "EARTH’S ENIGMAS CO.";
       typeEl.textContent = "";
       typeEl.classList.add("typeCursor");
-    
-      for (let i=0;i<fullText.length;i++){
+
+      for (let i = 0; i < fullText.length; i++){
         if (skipped) return;
         typeEl.textContent += fullText[i];
-        await sleep(TYPE_MS);
+        await sleep(26);
       }
       typeEl.classList.remove("typeCursor");
-    
-      await sleep(HOLD_MS);
-      if (skipped) return;
-    
-      // fade out overlay + boot
-      drawEls.forEach(el => el.classList.remove("eecIntroGlow"));
-      intro.setAttribute("aria-hidden","true");
-      await sleep(FADE_MS);
-      await runBootSequence();
-    }
 
-    // =============================
-    // BOOT SEQUENCE (guarded)
-    // =============================
-    async function runBootSequence(){
-      if (bootStarted) return;
-      bootStarted = true;
-    
-      // ... keep the rest of your boot sequence exactly as-is ...
+      // Fade intro out (short)
+      await sleep(220);
+      if (skipped) return;
+
+      intro.setAttribute("aria-hidden","true");
+      await sleep(260);
+      await runBootSequence();
     }
 
     // =============================
     // BOOT SEQUENCE
     // =============================
     async function runBootSequence(){
-      if (bootStarted) return;
-      bootStarted = true;
-
-      await sleep(220);
+      await sleep(120);
 
       // Skip animation
       const skipBtn = document.getElementById("skipBootBtn");
@@ -1507,7 +1481,7 @@ STATUS: WORK IN PROGRESS
         skipBtn.addEventListener("click", () => {
           SKIP_BOOT = true;
           hideSkipButton();
-        }, { once: true });
+        }, { once:true });
       }
 
       // Directive
@@ -1549,9 +1523,7 @@ STATUS: WORK IN PROGRESS
 
       // Green dot opens VIDEO
       const nemoDot = document.getElementById("nemoDot");
-      if (nemoDot){
-        nemoDot.addEventListener("click", () => openNemoModal());
-      }
+      if (nemoDot) nemoDot.addEventListener("click", openNemoModal);
 
       // Modal handlers
       const vClose = document.getElementById("videoClose");
