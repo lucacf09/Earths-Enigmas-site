@@ -121,6 +121,39 @@
     .entityItem:hover{border-color:rgba(116,211,255,.35)}
     .entityId{color:var(--accent)}
     .entityStatus{color:var(--muted)}
+    
+    /* Entity status dots (reuse map dot style, but non-interactive) */
+    .entityNameLine{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
+
+    .entityDot{
+      position:relative;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      flex:0 0 auto;
+      transform:none;           /* override mapDot translate */
+      cursor:default;
+      pointer-events:none;      /* never clickable */
+      margin-top:6px;           /* visually align with first text line */
+    }
+
+    .entityDot::before{
+      content:"";
+      position:absolute;
+      inset:-4px;
+      border-radius:50%;
+      background:inherit;
+      opacity:.6;
+      animation: dotPulse 2.2s ease-in-out infinite;
+      z-index:-1;
+    }
+
+    /* Ensure entity dots never show map tooltip behavior */
+    .entityDot::after{ content:none !important; }
 
     /* MAP */
     .mapWrap{
@@ -439,6 +472,16 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     // =============================
     const DEV_TOKEN = "ANOMALYCRISIS";
     function isDevMode(){
+      // Canonical dev order must be EXACT:
+    const DEV_ENTITY_ORDER = [
+      "ALIENI_04",
+      "JULIA_01",
+      "PRUDENCE_02",
+      "MINERVA_05",
+      "TANCY_01",
+      "VOLTA_01",
+      "NEMO_03"
+    ];
       const params = new URLSearchParams(window.location.search);
       return params.get("dev") === DEV_TOKEN;
     }
@@ -453,6 +496,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
       { id:"EEC-ENT-0014", name:"JULIA_01",    status:"CONTAINMENT BREACHED - ACTIVE MONITORING"           },
       { id:"EEC-ENT-0029", name:"PRUDENCE_02", status:"CONTAINMENT BREACHED - MISSING"         },
       { id:"EEC-ENT-0033", name:"MINERVA_05",  status:"CONTAINMENT BREACHED - MISSING"       },
+      { id:"EEC-ENT-0092", name:"TANCY_01",    status:"INITIATIVE TERMINATED"      },
       { id:"EEC-ENT-0055", name:"VOLTA_01",    status:"CONTAINMENT BREACHED - ACTIVE SEARCH - EXTREME PRIORITY" },
       { id:"EEC-ENT-0041", name:"NEMO_03",     status:"CONTAINMENT BREACHED - ACTIVE MONITORING - PRIORITISING" }
     ];
@@ -849,6 +893,7 @@ Restricted Archive Division`;
       "JULIA_01": JULIA_FILE_TEXT,
       "PRUDENCE_02": PRUDENCE_FILE_TEXT,
       "MINERVA_05": MINERVA_FILE_TEXT,
+      "TANCY_01": TANCY_FILE_TEXT,
       "VOLTA_01": VOLTA_FILE_TEXT,
       // "TANCY_01": TANCY_FILE_TEXT, // only useful once you add it to ENTITIES
       };
@@ -1121,11 +1166,17 @@ STATUS: WORK IN PROGRESS
     // =============================
     // ENTITY LIST
     // =============================
+    function getEntitiesInDevOrder(){
+      const byName = new Map(ENTITIES.map(e => [e.name, e]));
+      return DEV_ENTITY_ORDER.map(name => byName.get(name)).filter(Boolean);
+    }
+    
     function renderEntitiesWithLed(){
       const entityList = document.getElementById("entityList");
       entityList.innerHTML = "";
 
-      ENTITIES.forEach((e, idx) => {
+      const ordered = getEntitiesInDevOrder();
+      ordered.forEach((e, idx) => {
         const li = document.createElement("li");
         li.className = "entityItem ledOn";
         li.style.animationDelay = `${120 + idx*80}ms`;
@@ -1135,10 +1186,24 @@ STATUS: WORK IN PROGRESS
 
         const displayName = dev ? e.name : (isNemo ? e.name : fullyCorruptLabel(e.name));
 
+        const isNemo = e.name === "NEMO_03";
+        const dev = isDevMode();
+
+        // display name logic (keep your fully-corrupted change)
+        const displayName = dev ? e.name : (isNemo ? e.name : fullyCorruptLabel(e.name));
+
+        // dot color
+        const dotClass = isNemo ? "dotGreen" : "dotRed";
+        
         li.innerHTML = `
-          <div><span class="entityId">${e.id}</span> · ${displayName}</div>
-          <div class="entityStatus">STATUS: ${e.status}</div>
-        `;
+        <div class="entityNameLine">
+          <span class="entityDot ${dotClass}" aria-hidden="true"></span>
+          <div>
+            <div><span class="entityId">${e.id}</span> · ${displayName}</div>
+            <div class="entityStatus">STATUS: ${e.status}</div>
+          </div>
+        </div>
+      `;
 
         // Click rules:
         // - Public mode: only NEMO is clickable
@@ -1269,7 +1334,7 @@ STATUS: WORK IN PROGRESS
 
       // Operator key reveal:
       // - Desktop: Shift+click production logo
-      // - Mobile: 7 taps within 3 seconds (change threshold below if you want)
+      // - Mobile: 3 taps within 3 seconds (change threshold below if you want)
       const prodLogo = document.getElementById("logoProd");
       if (prodLogo){
         prodLogo.addEventListener("click", (e) => {
@@ -1278,7 +1343,7 @@ STATUS: WORK IN PROGRESS
 
         let tapCount = 0;
         let tapTimer = null;
-        const TAP_THRESHOLD = 7; // change if you want
+        const TAP_THRESHOLD = 3; // change if you want
         const TAP_WINDOW_MS = 3000;
 
         const registerTap = () => {
