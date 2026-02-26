@@ -7,48 +7,6 @@
   <title>Earth's Enigmas Co. — Records Terminal</title>
 
   <style>
-    /* prevent image long-press save/share callout */
-    .noCallout{
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
-    }
-    /* SKIP BOOT BUTTON */
-    .skipBootBtn{
-      position:fixed;
-      top:14px;
-      left:14px;
-      z-index:10000;
-      font-family:var(--mono);
-      font-size:12px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(28,37,50,.95);
-      background: rgba(7,9,12,.65);
-      color:rgba(232,238,247,.92);
-      cursor:pointer;
-      backdrop-filter: blur(10px);
-    }
-        /* FILE MODAL ACTIONS */
-    .modalBody{position:relative; padding:14px;} /* needed for absolute positioning */
-    .fileActions{
-      position:absolute;
-      right:14px;
-      bottom:14px;
-      display:none;
-    }
-    .fileActions[aria-hidden="false"]{display:block}
-    
-    .fileActionBtn{
-      font-family:var(--mono);
-      font-size:12px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(28,37,50,.95);
-      background: rgba(7,9,12,.65);
-      color:rgba(232,238,247,.92);
-      cursor:pointer;
-    }
     :root{
       --bg:#07090c;
       --panel:#0d1117;
@@ -65,7 +23,6 @@
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       --radius: 18px;
     }
-    
 
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -133,7 +90,6 @@
     /* SPLIT LAYOUT */
     .split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
     @media(max-width:900px){.split{grid-template-columns:1fr}}
-
     .col{display:grid;gap:28px}
 
     /* EVENT LOG */
@@ -150,9 +106,9 @@
       border:1px solid rgba(28,37,50,.9);
       background: rgba(7,9,12,.45);
       line-height:1.6;
-      opacity:1; /* visible by default */
+      opacity:1;
     }
-    .entityItem.ledOn{opacity:0} /* only hidden while flickering in */
+    .entityItem.ledOn{opacity:0}
     .entityItem:hover{border-color:rgba(116,211,255,.35)}
     .entityId{color:var(--accent)}
     .entityStatus{color:var(--muted)}
@@ -172,8 +128,6 @@
       filter:contrast(115%) brightness(85%);
       border-radius:12px;
     }
-
-    /* Dot core static; pulse ring on ::before */
     .mapDot{
       position:absolute;
       width:6px;height:6px;
@@ -181,7 +135,6 @@
       transform:translate(-50%,-50%);
       cursor:pointer;
     }
-
     .mapDot::before{
       content:"";
       position:absolute;
@@ -193,10 +146,8 @@
       z-index:-1;
     }
     .mapDot:hover::before{animation-play-state:paused}
-
     .dotRed{background:#ff2a2a;box-shadow:0 0 8px #ff2a2a}
     .dotGreen{background:#00ff5a;box-shadow:0 0 8px #00ff5a}
-
     .mapDot::after{
       content:attr(data-name);
       position:absolute;
@@ -215,7 +166,6 @@
       transition:opacity .15s ease;
     }
     .mapDot:hover::after{opacity:1}
-
     @keyframes dotPulse{
       0%{transform:scale(1);opacity:1}
       50%{transform:scale(1.8);opacity:.35}
@@ -233,9 +183,7 @@
     .prodFooterLogo{position:absolute;bottom:20px;right:28px;z-index:1}
     .prodFooterLogo img{height:120px;width:auto;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(0,0,0,.5))}
 
-    /* =============================
-       BOOT ANIMATIONS
-       ============================= */
+    /* BOOT ANIMATIONS */
     @keyframes ledFlicker {
       0%   { opacity:0; filter:brightness(0) drop-shadow(0 0 0 rgba(0,0,0,0)); transform:translateY(-2px); }
       6%   { opacity:1; filter:brightness(1.9) drop-shadow(0 0 16px rgba(116,211,255,.22)); }
@@ -247,13 +195,10 @@
     }
     .ledOn{ animation: ledFlicker 700ms ease-out both; }
     .delay300{animation-delay:300ms}
-
     .typeCursor::after{content:"▍";margin-left:2px;opacity:1;animation: blink 700ms steps(1,end) infinite}
     @keyframes blink{50%{opacity:0}}
 
-    /* =============================
-       VIDEO / FILE MODALS
-       ============================= */
+    /* VIDEO / FILE MODALS */
     .modalOverlay{
       position:fixed;
       inset:0;
@@ -266,7 +211,6 @@
       z-index:9999;
     }
     .modalOverlay[aria-hidden="false"]{display:flex}
-
     .modal{
       width:min(980px, 100%);
       border-radius:18px;
@@ -301,7 +245,7 @@
       cursor:pointer;
     }
     .modalClose:hover{border-color:rgba(116,211,255,.35)}
-
+    .modalBody{position:relative; padding:14px}
     .modalBody video{width:100%;height:auto;display:block;border-radius:12px;background:#000}
 
     .fileConsole{
@@ -317,13 +261,60 @@
     .fileConsole::-webkit-scrollbar{width:10px}
     .fileConsole::-webkit-scrollbar-thumb{background:rgba(28,37,50,.9);border-radius:999px;border:2px solid rgba(7,9,12,.55)}
 
+    /* FILE MODAL ACTIONS */
+    .fileActions{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      display:none;
+    }
+    .fileActions[aria-hidden="false"]{display:block}
+    .fileActionBtn{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.65);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+    }
+    .fileActionBtn:hover{border-color:rgba(116,211,255,.35)}
+
+    /* SKIP BOOT BUTTON */
+    .skipBootBtn{
+      position:fixed;
+      top:14px;
+      left:14px;
+      z-index:10000;
+      font-family:var(--mono);
+      font-size:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(28,37,50,.95);
+      background: rgba(7,9,12,.65);
+      color:rgba(232,238,247,.92);
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+    }
+    .skipBootBtn:hover{border-color:rgba(116,211,255,.35)}
+
+    /* prevent image callout / selection on mobile */
+    .noCallout{
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      touch-action: manipulation;
+    }
+
     @media (prefers-reduced-motion: reduce){
       .ledOn{animation:none;opacity:1;transform:none;filter:none}
       .typeCursor::after{animation:none}
       .mapDot::before{animation:none}
       .entityItem.ledOn{opacity:1 !important}
     }
-
     @media (max-width: 480px){
       .mainLogo img{ height:180px; }
       .prodFooterLogo img{ height:90px; }
@@ -333,6 +324,7 @@
 
 <body>
   <button class="skipBootBtn" id="skipBootBtn" type="button">skip animation</button>
+
   <header>
     <div class="mainLogo">
       <img id="logoEEC" class="ledOn" src="eec-logo.png" alt="Earth's Enigmas Co. Logo">
@@ -415,7 +407,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
     </div>
   </div>
 
-  <!-- File Modal (NEMO entity entry) -->
+  <!-- File Modal -->
   <div class="modalOverlay" id="fileModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Entity file">
     <div class="modal">
       <div class="modalTop">
@@ -424,7 +416,7 @@ All anomalous activity is to be documented, contained, and reclassified for publ
       </div>
       <div class="modalBody">
         <div class="fileConsole" id="fileBody"></div>
-        
+
         <div class="fileActions" id="fileActions" aria-hidden="true">
           <button class="fileActionBtn" id="enterKeyBtn" type="button">enter encryption key</button>
         </div>
@@ -433,6 +425,19 @@ All anomalous activity is to be documented, contained, and reclassified for publ
   </div>
 
   <script>
+    // =============================
+    // DEV MODE (private)
+    // =============================
+    // Bookmark your dev view like:
+    //   index.html?mode=dev&k=PASTE_YOUR_TOKEN
+    const DEV_TOKEN = "CHANGE_ME_TO_A_LONG_RANDOM_STRING";
+
+    const params = new URLSearchParams(window.location.search);
+    const IS_DEV = (params.get("mode") === "dev" && params.get("k") === DEV_TOKEN);
+
+    // Optional: make it obvious to you (not users) that you're in dev
+    if (IS_DEV) document.title = "DEV — " + document.title;
+
     // =============================
     // DATA
     // =============================
@@ -494,100 +499,23 @@ Baseline Form (Observed Post-Stabilization):
   o Dentition needle-like, recurved
   o Ocular structure recessed and reflective
   o Anglerfish-like craniofacial distortion (no photophore present)
-The absence of the anglerfish bioluminescent organ was unexpected. Instead of developing a lure, cranial cartilage reshaped into a predatory visage resembling deep-sea species.
-Baseline appearance has been described in internal reports as:
-“Malformed. Unstructured. Anatomically profane.”
 
 IV. Adaptive & Mimetic Capabilities
-1. Vocal Replication (SUCCESSFUL)
 • Perfect replication of human speech after brief exposure
-• Can layer multiple vocal sources
-• Demonstrates emotional tone simulation
-• Frequently imitates distress calls, familiar voices, or personal identifiers
-Field observation indicates it learns names rapidly.
+• Complete morphogenic shift (visual approximation)
+• Prefers dark / warm / humid / enclosed environments
+• Lures prey via trusted voice mimicry
+• Avoids bright light exposure
 
-2. Camouflage → Full Morphogenic Shift (UNINTENDED EVOLUTION)
-Originally designed for pigment-based camouflage via chromatophores.
-Mutation resulted in:
-• Complete somatic restructuring
-• Skeletal compression and expansion
-• Organ repositioning
-• Dermal texture alteration
-• Approximate human replication (visual only)
-Notably:
-• Mass remains constant
-• Fine biological inaccuracies detectable upon close inspection
-• Replication improves with observation duration
-The organism does not merely blend – it becomes.
-This trait exceeds original design parameters.
-
-3. Predatory Strategy
-NEMO_03 does not pursue prey physically.
-Instead, it:
-1. Observes target from concealment
-2. Mimics voice of known associate
-3. Adopts approximate physical appearance
-4. Lures prey into enclosed or low-light environment
-5. Executes rapid mandibular expansion and cervical fracture
-This behaviour mirrors anglerfish ambush logic – replacing light lure with psychological deception.
-
-4. Environmental Preference
-Rather than inheriting echolocation, NEMO_03 acquired behavioural traits from chiropteran DNA:
-• Prefers dark
-• Prefers warm
-• Prefers humid / enclosed environments
-• Avoids open, dry, well-lit terrain
-Commonly seeks:
-• Basements
-• Ventilation systems
-• Sewer infrastructure
-• Subfloor cavities
-• Attics during winter
-It becomes increasingly agitated under bright light exposure.
-
-V. Behavioural Notes
-• Displays observational intelligence
-• Demonstrates patience beyond predatory necessity
-• Has been observed mimicking staff members without immediate attack
-• Appears to “practice” forms when unobserved
-Psychological profile suggests emerging self-awareness.
-
-VI. Containment History
-• Successfully contained in Adaptive Chamber 3A for 41 days
-• Containment failure events linked to unexplained electromagnetic disturbances
-• Security footage repeatedly corrupted prior to incident
-No evidence of forced breach.
-Exit path remains unidentified.
-
-VII. Incident Report — Anomaly Crisis
+V. Incident Report — Anomaly Crisis
 Date: 17/12/20
-Context: Facility-wide systems failure during classified anomaly event coinciding with early global outbreak reports.
-During emergency lockdown sequence:
-• Power grid destabilized
-• Biological containment fields failed
 • Surveillance blackout (7 minutes 13 seconds)
 • NEMO_03 missing upon restoration
-Last thermal signature detected near sub-basement access corridor.
-Exterior breach signs discovered hours later.
-
-VIII. Current Status
-NEMO_03 is presumed active.
-Given its:
-• Advanced mimicry
-• Form alteration ability
-• Preference for inhabited enclosed spaces
-• Capacity to replicate trusted individuals
-Risk assessment concludes:
-Direct confrontation not advised.
-Verification of identity protocols mandatory in all secure facilities.
-
-IX. Advisory Notice
-If auditory anomalies occur in isolated environments – particularly voices of known individuals requesting entry – verification must be visual and tactile under high-intensity lighting conditions.
-Do not respond to familiar voices in darkness.
 
 END OF FILE
 Earth’s Enigmas Co.
 Restricted Archive Division`;
+
     const NEMO_PREVIEW_TEXT = `Project NEMO – Experimental Adaptation Initiative
 Creature File: NEMO_03
 Classification: Adaptive Mimetic Organism
@@ -606,12 +534,16 @@ II. Notes
 
 ENTER DECRYPTION KEY TO ACCESS FULL FILE.`;
 
-const NEMO_KEY = "olssv dvysk!"; // change to whatever you want
-const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
+    // Public "key" (you can change anytime)
+    const NEMO_KEY = "olssv dvysk!"; // example
+    const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
 
     // =============================
-    // HELPERS
+    // STATE / HELPERS
     // =============================
+    let SKIP_BOOT = false;
+    let FILE_MODE = ""; // "", "NEMO_PREVIEW", "NEMO_FULL", "ACCESS_DENIED", "OTHER"
+
     function glitch(text,intensity=0.4){
       const glyphs=["█","▓","▒","░","#","/","_"];
       let out="";
@@ -625,7 +557,15 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       return out;
     }
 
-    function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+    function hideSkipButton(){
+      const btn = document.getElementById("skipBootBtn");
+      if (btn) btn.style.display = "none";
+    }
+
+    function sleep(ms){
+      if (SKIP_BOOT) return Promise.resolve();
+      return new Promise(r=>setTimeout(r,ms));
+    }
 
     function stashAndClear(el){
       el.dataset.full = el.textContent;
@@ -637,12 +577,13 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
     function typeFromData(el, speed=10){
       const full = el.dataset.full ?? "";
       el.textContent = "";
-      
+
       if (SKIP_BOOT){
         el.textContent = full;
         el.classList.remove("typeCursor");
         return Promise.resolve();
       }
+
       el.classList.add("typeCursor");
       return new Promise(resolve => {
         let i=0;
@@ -673,33 +614,32 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
     }
 
     // =============================
-    // VIDEO / FILE MODALS
+    // UNLOCK / ACTIONS
     // =============================
-        let SKIP_BOOT = false;
-    
-    function hideSkipButton(){
-      const btn = document.getElementById("skipBootBtn");
-      if (btn) btn.style.display = "none";
-    }
-    
     function isNemoUnlocked(){
+      if (IS_DEV) return true; // dev sees full file always
       return localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
     }
-    
     function unlockNemo(){
+      if (IS_DEV) return;
       localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
     }
-    
     function relockNemo(){
       localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY);
     }
-    
+
     function setFileActions({ showEnterKey = false } = {}){
       const actions = document.getElementById("fileActions");
       if (!actions) return;
-      actions.setAttribute("aria-hidden", showEnterKey ? "false" : "true");
+
+      // Never show key UI in dev
+      const shouldShow = (!IS_DEV) && showEnterKey;
+      actions.setAttribute("aria-hidden", shouldShow ? "false" : "true");
     }
-    
+
+    // =============================
+    // VIDEO / FILE MODALS
+    // =============================
     const VIDEO_SRC = "nemo.mp4";
 
     function openNemoModal(){
@@ -707,13 +647,10 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       const video = document.getElementById("nemoVideo");
       overlay.setAttribute("aria-hidden","false");
 
-      // IMPORTANT: user-gesture initiated click enables audio
       video.muted = false;
       video.volume = 1;
 
-      if (!video.currentSrc){
-        video.src = VIDEO_SRC;
-      }
+      if (!video.currentSrc) video.src = VIDEO_SRC;
       try{ video.currentTime = 0; }catch(_e){}
 
       const p = video.play();
@@ -727,31 +664,34 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       try{ video.pause(); }catch(_e){}
     }
 
-    function openFileModal(title, body){
+    function openFileModal(title, body, mode="OTHER"){
       const overlay = document.getElementById("fileModal");
       document.getElementById("fileTitle").textContent = title;
       document.getElementById("fileBody").textContent = body;
       overlay.setAttribute("aria-hidden","false");
+
+      FILE_MODE = mode;
+      // Only show key button on the NEMO preview (public mode only)
+      setFileActions({ showEnterKey: (FILE_MODE === "NEMO_PREVIEW") && !isNemoUnlocked() });
     }
-    
+
     function closeFileModal(){
       const overlay = document.getElementById("fileModal");
       overlay.setAttribute("aria-hidden","true");
+      FILE_MODE = "";
       setFileActions({ showEnterKey:false });
     }
-    
+
     function openEncryptedNemoFile(){
       if (isNemoUnlocked()){
-        setFileActions({ showEnterKey:false });
-        openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
+        openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, "NEMO_FULL");
         return;
       }
-      
-      openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT);
-      setFileActions({ showEnterKey:true });
+      openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT, "NEMO_PREVIEW");
     }
 
     function revealOperatorKey(){
+      if (IS_DEV) return; // dev doesn't need it
       openFileModal("SYSTEM CACHE RECOVERY", [
         "LOCAL HEADER CACHE RESTORED",
         "—",
@@ -760,7 +700,7 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
         "—",
         "NOTICE:",
         "  This action has been logged.",
-      ].join("\n"));
+      ].join("\n"), "OTHER");
     }
 
     // =============================
@@ -865,7 +805,7 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
               "NOTICE:",
               "  Do not attempt reconstruction.",
               "  Report any secondary copies.",
-            ].join("\n"));
+            ].join("\n"), "OTHER");
           }
         });
 
@@ -884,7 +824,7 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       if (skipBtn){
         skipBtn.addEventListener("click", () => {
           SKIP_BOOT = true;
-          hideSkipButton();
+          hideSkipButton(); // hide immediately on click
         });
       }
 
@@ -942,49 +882,51 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
       if (fClose) fClose.addEventListener("click", closeFileModal);
       if (fOverlay) fOverlay.addEventListener("click", (e) => { if (e.target === fOverlay) closeFileModal(); });
 
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape"){
-          closeNemoModal();
-          closeFileModal();
-        }
-      });
-      
-      // Enter key button (inside file modal)
+      // Enter key button (only meaningful in PUBLIC)
       const enterKeyBtn = document.getElementById("enterKeyBtn");
       if (enterKeyBtn){
         enterKeyBtn.addEventListener("click", () => {
+          if (IS_DEV) return;
+
           const key = prompt("DECRYPTION KEY REQUIRED:");
           if (key === null) return;
-          
+
           if (key.trim() === NEMO_KEY){
             unlockNemo();
-            setFileActions({ showEnterKey:false });
-            openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT);
+            openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, "NEMO_FULL");
           } else {
             openFileModal("NEMO_03 · ACCESS DENIED", [
               "CLEARANCE: FAILED",
               "KEY STATUS: INVALID",
               "NOTICE:",
               "  Repeated attempts will be logged."
-            ].join("\n"));
-            setFileActions({ showEnterKey:true });
+            ].join("\n"), "ACCESS_DENIED");
+
+            // Hide the key button on ACCESS DENIED (only show on preview)
+            setFileActions({ showEnterKey:false });
           }
         });
       }
-      // Operator key reveal (Shift + click production logo)
+
+      // Operator key reveal:
+      // - Desktop: Shift + click production logo
+      // - Mobile: 7 taps within 3 seconds on production logo
       const prodLogo = document.getElementById("logoProd");
-      
       if (prodLogo){
-        // Desktop: Shift + click still works
+        // prevent iOS image context menu
+        prodLogo.addEventListener("contextmenu", (e) => e.preventDefault());
+
         prodLogo.addEventListener("click", (e) => {
-          if (e.shiftKey) revealOperatorKey();
+          if (e.shiftKey){
+            revealOperatorKey();
+          }
         });
-        
-        // Mobile-friendly: 7 taps within 3 seconds
+
         let tapCount = 0;
         let tapTimer = null;
 
         const registerTap = () => {
+          if (IS_DEV) return;
           tapCount++;
 
           if (tapCount === 1){
@@ -1003,19 +945,32 @@ const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
         };
 
         prodLogo.addEventListener("touchend", (e) => {
-          // stop ghost clicks / image interactions
+          // stop the "save image" flow as much as possible
           e.preventDefault();
           registerTap();
         }, { passive: false });
-
-        // Also allow fast clicking on desktop without shift (optional)
-        prodLogo.addEventListener("dblclick", () => {
-          // optional: remove if you don't want this
-          // revealOperatorKey();
-        });
       }
-      
+
+      // Keyboard controls
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape"){
+          closeNemoModal();
+          closeFileModal();
+        }
+
+        // Testing: Ctrl+Alt+L relocks NEMO in PUBLIC (still works in DEV but irrelevant)
+        if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "l"){
+          relockNemo();
+          openFileModal("SYSTEM NOTICE", "NEMO_03 LOCK STATE RESET.", "OTHER");
+          setFileActions({ showEnterKey:false });
+        }
+      });
+
+      // Hide skip button once boot finishes normally
       hideSkipButton();
+
+      // In dev mode, you may prefer the key UI never appears even if modal state changes
+      if (IS_DEV) setFileActions({ showEnterKey:false });
     });
   </script>
 </body>
