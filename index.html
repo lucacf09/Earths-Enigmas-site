@@ -123,16 +123,10 @@
     .entityStatus{color:var(--muted)}
 
     /* Entity status dots (reuse map dot style, but non-interactive) */
-    .entityNameLine{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-    }
+    .entityNameLine{display:flex;align-items:flex-start;gap:10px}
     .entityDot{
       position:relative;
-      width:6px;
-      height:6px;
-      border-radius:50%;
+      width:6px;height:6px;border-radius:50%;
       flex:0 0 auto;
       transform:none;
       cursor:default;
@@ -149,7 +143,7 @@
       animation: dotPulse 2.2s ease-in-out infinite;
       z-index:-1;
     }
-    .entityDot::after{ content:none !important; }
+    .entityDot::after{content:none !important}
 
     /* MAP */
     .mapWrap{
@@ -169,12 +163,10 @@
 
     .mapDot{
       position:absolute;
-      width:6px;height:6px;
-      border-radius:50%;
+      width:6px;height:6px;border-radius:50%;
       transform:translate(-50%,-50%);
       cursor:pointer;
     }
-
     .mapDot::before{
       content:"";
       position:absolute;
@@ -282,16 +274,9 @@
       filter: drop-shadow(0 18px 50px rgba(0,0,0,.65));
       transform: translateX(0);
     }
-    .globeStroke{
-      fill:none;
-      stroke: rgba(232,238,247,.92);
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      stroke-dasharray: var(--dash, 600);
-      stroke-dashoffset: var(--dash, 600);
-      opacity:.92;
-    }
+    /* ensure loaded svg behaves */
+    #introGlobeWrap svg{display:block;width:100%;height:auto}
+
     .introWordmark{
       width:min(620px, 70vw);
       opacity:0;
@@ -336,6 +321,12 @@
     @media (max-width: 640px){
       @keyframes introSlideLeft{ to{ transform: translateX(-90px);} }
       .introType{ font-size:14px; letter-spacing:3px; }
+    }
+
+    /* stroke glow (applied during draw) */
+    .eecIntroGlow{
+      filter: drop-shadow(0 0 6px rgba(116,211,255,.55))
+              drop-shadow(0 0 14px rgba(116,211,255,.22));
     }
 
     /* =============================
@@ -447,6 +438,7 @@
       .typeCursor::after{animation:none}
       .mapDot::before{animation:none}
       .entityItem.ledOn{opacity:1 !important}
+      .eecIntroGlow{filter:none}
     }
 
     @media (max-width: 480px){
@@ -460,14 +452,7 @@
   <!-- INTRO OVERLAY -->
   <div id="introOverlay" class="introOverlay" aria-hidden="false">
     <div class="introStage" aria-label="Intro animation">
-      <svg id="introGlobe" class="introGlobe" viewBox="0 0 220 220" role="img" aria-label="EEC globe mark">
-        <circle class="globeStroke" cx="110" cy="110" r="82"></circle>
-        <path class="globeStroke" d="M 28 110 C 64 92, 156 92, 192 110"></path>
-        <path class="globeStroke" d="M 34 82 C 70 68, 150 68, 186 82"></path>
-        <path class="globeStroke" d="M 34 138 C 70 152, 150 152, 186 138"></path>
-        <path class="globeStroke" d="M 110 28 C 92 64, 92 156, 110 192"></path>
-        <path class="globeStroke" d="M 110 28 C 128 64, 128 156, 110 192"></path>
-      </svg>
+      <div id="introGlobeWrap" class="introGlobe"></div>
 
       <div class="introWordmark">
         <div id="introType" class="introType"></div>
@@ -1045,11 +1030,9 @@ STATUS: WORK IN PROGRESS
       }
       return out;
     }
-
     function fullyCorruptLabel(label){
       return String(label).replace(/[^\s]/g, "█");
     }
-
     function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
     function stashAndClear(el){
@@ -1057,7 +1040,6 @@ STATUS: WORK IN PROGRESS
       el.dataset.full = el.textContent;
       el.textContent = "";
     }
-
     function reveal(el){
       if (!el) return;
       el.classList.remove("prehide");
@@ -1126,7 +1108,6 @@ STATUS: WORK IN PROGRESS
       if (!overlay || !video) return;
 
       overlay.setAttribute("aria-hidden","false");
-
       video.muted = false;
       video.volume = 1;
       if (!video.currentSrc) video.src = VIDEO_SRC;
@@ -1171,14 +1152,8 @@ STATUS: WORK IN PROGRESS
       if (isDevMode()) return true;
       return localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
     }
-
-    function unlockNemo(){
-      localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1");
-    }
-
-    function relockNemo(){
-      localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY);
-    }
+    function unlockNemo(){ localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1"); }
+    function relockNemo(){ localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY); }
 
     function openEncryptedNemoFile(){
       if (isNemoUnlocked()){
@@ -1319,6 +1294,7 @@ STATUS: WORK IN PROGRESS
               return;
             }
             if (!dev) return;
+
             const text = ENTITY_FILES[e.name] || WIP_FILE_TEXT(e.name);
             openFileModal(`${e.name} · ENTITY FILE`, text, { showEnterKey:false });
           });
@@ -1331,14 +1307,67 @@ STATUS: WORK IN PROGRESS
     // =============================
     // INTRO -> BOOT
     // =============================
+    async function loadIntroSVG(){
+      const wrap = document.getElementById("introGlobeWrap");
+      if (!wrap) return null;
+
+      try{
+        const res = await fetch("EEC-logo.svg", { cache: "no-cache" });
+        const svgText = await res.text();
+        wrap.innerHTML = svgText;
+
+        const svg = wrap.querySelector("svg");
+        if (!svg) return null;
+
+        svg.removeAttribute("width");
+        svg.removeAttribute("height");
+        svg.style.width = "100%";
+        svg.style.height = "auto";
+
+        return svg;
+      }catch(e){
+        console.error("Failed to load EEC-logo.svg", e);
+        return null;
+      }
+    }
+
+    function getDrawableEls(svg){
+      // Aim: only animate "linework" (usually stroke-based). Avoid filled text shapes.
+      const candidates = svg.querySelectorAll("path, circle, line, ellipse, polyline, polygon, rect");
+      const out = [];
+
+      candidates.forEach(el => {
+        // skip <text> and anything inside <text>
+        if (el.closest("text")) return;
+
+        const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
+        const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
+
+        // heuristic: animate if it's stroke-based, or explicitly fill="none"
+        const strokeBased = strokeAttr && strokeAttr !== "none";
+        const fillNone = fillAttr === "none";
+
+        if (strokeBased || fillNone) out.push(el);
+      });
+
+      // if we found nothing (some SVGs omit stroke attr), fall back to ALL paths
+      if (out.length === 0){
+        svg.querySelectorAll("path, circle, line, ellipse, polyline, polygon").forEach(el => out.push(el));
+      }
+
+      return out;
+    }
+
+    let bootStarted = false;
+
     async function runIntroThenBoot(){
       const intro = document.getElementById("introOverlay");
-      const globe = document.getElementById("introGlobe");
       const wordmark = document.querySelector(".introWordmark");
       const typeEl = document.getElementById("introType");
       const skip = document.getElementById("introSkip");
 
-      if (!intro || !globe || !typeEl || !wordmark){
+      // if intro missing, just boot
+      if (!intro || !wordmark || !typeEl){
         await runBootSequence();
         return;
       }
@@ -1355,34 +1384,65 @@ STATUS: WORK IN PROGRESS
 
       if (skip) skip.addEventListener("click", endNow);
 
-      const strokes = globe.querySelectorAll(".globeStroke");
-      strokes.forEach(p => {
+      const svg = await loadIntroSVG();
+      if (!svg){
+        await endNow();
+        return;
+      }
+
+      // DRAW PHASE
+      const drawEls = getDrawableEls(svg);
+
+      // prep dash lengths + glow
+      drawEls.forEach(el => {
+        el.classList.add("eecIntroGlow");
+
+        // If it has fill (like filled text paths) don't force fill:none here.
+        // For stroke: gently set if missing
+        const strokeAttr = (el.getAttribute("stroke") || "").trim().toLowerCase();
+        const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
+        const shouldBeStroke = strokeAttr !== "none" || fillAttr === "none";
+
+        if (shouldBeStroke){
+          if (!el.getAttribute("stroke")) el.setAttribute("stroke", "rgba(232,238,247,.92)");
+          if (!el.getAttribute("stroke-width")) el.setAttribute("stroke-width", "2.2");
+          el.setAttribute("stroke-linecap", "round");
+          el.setAttribute("stroke-linejoin", "round");
+        }
+
+        // getTotalLength only exists on SVGGeometryElement
         try{
-          const len = p.getTotalLength();
+          const len = el.getTotalLength();
           const dash = Math.ceil(len + 2);
-          p.style.setProperty("--dash", String(dash));
-          p.style.strokeDasharray = String(dash);
-          p.style.strokeDashoffset = String(dash);
-        }catch(_e){}
+          el.style.strokeDasharray = String(dash);
+          el.style.strokeDashoffset = String(dash);
+          el.style.opacity = ".95";
+        }catch(_e){
+          // non-geometry elements (e.g., rect in some browsers) — skip dash draw
+        }
       });
 
-      strokes.forEach((p, i) => {
-        p.style.transition = "none";
-        p.getBoundingClientRect();
-        p.style.transition = `stroke-dashoffset 700ms ease ${i*90}ms, opacity 500ms ease ${i*90}ms`;
-        p.style.strokeDashoffset = "0";
-        p.style.opacity = ".95";
+      // animate dashoffset to 0 with stagger
+      drawEls.forEach((el, i) => {
+        // only animate if dashoffset was set
+        if (!el.style.strokeDashoffset) return;
+        el.style.transition = "none";
+        el.getBoundingClientRect();
+        el.style.transition = `stroke-dashoffset 760ms ease ${i*70}ms, opacity 500ms ease ${i*70}ms`;
+        el.style.strokeDashoffset = "0";
       });
 
-      await sleep(700 + (strokes.length-1)*90 + 120);
+      await sleep(760 + (drawEls.length-1)*70 + 140);
       if (skipped) return;
 
-      globe.style.animation = "introSlideLeft 650ms cubic-bezier(.2,.9,.25,1) forwards";
+      // SLIDE + WORDMARK IN
+      svg.style.animation = "introSlideLeft 650ms cubic-bezier(.2,.9,.25,1) forwards";
       wordmark.style.animation = "introWordmarkIn 500ms ease 420ms forwards";
 
       await sleep(720);
       if (skipped) return;
 
+      // TYPE TEXT
       const fullText = "EARTH’S ENIGMAS CO.";
       typeEl.textContent = "";
       typeEl.classList.add("typeCursor");
@@ -1394,8 +1454,12 @@ STATUS: WORK IN PROGRESS
       }
       typeEl.classList.remove("typeCursor");
 
+      // fade intro out, then boot
       await sleep(380);
       if (skipped) return;
+
+      // remove glow right before fading (optional, looks cleaner)
+      drawEls.forEach(el => el.classList.remove("eecIntroGlow"));
 
       intro.setAttribute("aria-hidden","true");
       await sleep(560);
@@ -1406,6 +1470,9 @@ STATUS: WORK IN PROGRESS
     // BOOT SEQUENCE
     // =============================
     async function runBootSequence(){
+      if (bootStarted) return;
+      bootStarted = true;
+
       await sleep(220);
 
       // Skip animation
@@ -1414,7 +1481,7 @@ STATUS: WORK IN PROGRESS
         skipBtn.addEventListener("click", () => {
           SKIP_BOOT = true;
           hideSkipButton();
-        });
+        }, { once: true });
       }
 
       // Directive
