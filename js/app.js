@@ -1,1 +1,1054 @@
+<script>
+    // =============================
+    // DEV MODE
+    // =============================
+    const DEV_TOKEN = "ANOMALYCRISIS";
+    const DEV_ENTITY_ORDER = [
+      "ALIENI_04",
+      "JULIA_01",
+      "PRUDENCE_02",
+      "MINERVA_05",
+      "TANCY_01",
+      "VOLTA_01",
+      "NEMO_03"
+    ];
+    function isDevMode(){
+      const params = new URLSearchParams(window.location.search);
+      return params.get("dev") === DEV_TOKEN;
+    }
+
+    // =============================
+    // DATA
+    // =============================
+    const ENTITIES = [
+      { id:"EEC-ENT-0001", name:"ALIENI_04",   status:"EXPERIMENT PRESUMED FAILURE" },
+      { id:"EEC-ENT-0014", name:"JULIA_01",    status:"CONTAINMENT BREACHED - ACTIVE MONITORING" },
+      { id:"EEC-ENT-0029", name:"PRUDENCE_02", status:"CONTAINMENT BREACHED - MISSING" },
+      { id:"EEC-ENT-0033", name:"MINERVA_05",  status:"CONTAINMENT BREACHED - MISSING" },
+      { id:"EEC-ENT-0092", name:"TANCY_01",    status:"INITIATIVE TERMINATED / ARCHIVED - STATUS UNKNOWN POST-03/02/2021" },
+      { id:"EEC-ENT-0055", name:"VOLTA_01",    status:"CONTAINMENT BREACHED - ACTIVE SEARCH - EXTREME PRIORITY" },
+      { id:"EEC-ENT-0041", name:"NEMO_03",     status:"CONTAINMENT BREACHED - ACTIVE MONITORING - PRIORITISING" }
+    ];
+
+    const EVENT_LOG=[
+      {date:"2021-02-03", text:"Facility power fluctuation detected in Sub-Level B."},
+      {date:"2021-02-17", text:"Thermal signatures recorded in restricted corridor after hours."},
+      {date:"2021-03-01", text:"Security footage distortion between 02:11 and 02:16."},
+      {date:"2021-03-19", text:"Equipment calibration failure during routine diagnostics."},
+      {date:"2021-04-07", text:"Staff reported auditory anomaly in storage wing."},
+      {date:"2021-04-28", text:"Motion sensors triggered with no visible presence."},
+      {date:"2021-05-12", text:"Structural vibration detected without seismic activity."},
+      {spacer:true},
+      {alert:true, text:"UNUSUAL NOISE ACTIVITY REPORTED"},
+      {alert:true, text:"INITIAL INVESTIGATION YIELDED: NO RESULTS"},
+      {alert:true, text:"SOUND MONITORS RECORDED NOISES FROM THE BUILDING AT NIGHT"},
+      {alert:true, text:"WORKER'S SAFETY ADVISED UNTIL ENTITY IS LOCATED"},
+      {alert:true, text:"NEW INVESTIGATION SCHEDULE LOGGED"},
+      {spacer:true},
+      {alert:true, text:"CONTINUING TO MONITOR..."}
+    ];
+
+    // -----------------------------
+    // NEMO FILE + KEY
+    // -----------------------------
+    const NEMO_FILE_TEXT = `Project NEMO – Experimental Adaptation Initiative
+Creature File: NEMO_03
+Classification: Adaptive Mimetic Organism
+Status: ESCAPED
+Threat Level: SEVERE
+
+I. Overview
+NEMO_03 is the third biological construct developed under Project NEMO, an initiative aimed at engineering a lifeform capable of perfect environmental adaptation via biological mimicry.
+Unlike its predecessors (NEMO_01 and NEMO_02), which experienced systemic organ collapse during integration of composite genomes, NEMO_03 survived full procedural fusion and regenerative stabilization.
+It remains the only viable organism produced by the program.
+
+II. Genetic Composition Summary
+Primary genetic sources integrated into NEMO_03:
+• Deep-Sea Anglerfish (Lophiiformes) – predatory lure behaviour, facial morphology traits
+• Chameleon (Chamaeleonidae) – chromatophore-based camouflage system
+• Common Vampire Bat (Desmodus rotundus) – environmental preference encoding
+• African Grey Parrot (Psittacus erithacus) – advanced vocal mimicry
+• Common Octopus (Octopus vulgaris) – rapid dermal texture alteration
+• Cuttlefish (Sepiida) – dynamic neural skin patterning
+• Lyrebird (Menura novaehollandiae) – multi-source sound replication
+
+III. Physical Description
+Baseline Form (Observed Post-Stabilization):
+• Height: Variable (1.5m – 2.3m when upright)
+• Body Structure: Asymmetrical, elongated limbs, excessive joint articulation
+• Skin: Semi-translucent dermal membrane with subdermal chromatophore clusters
+• Facial Region:
+  o Distended jaw hinge
+  o Forward-protruding cranium
+  o Dentition needle-like, recurved
+  o Ocular structure recessed and reflective
+  o Anglerfish-like craniofacial distortion (no photophore present)
+The absence of the anglerfish bioluminescent organ was unexpected. Instead of developing a lure, cranial cartilage reshaped into a predatory visage resembling deep-sea species.
+Baseline appearance has been described in internal reports as:
+“Malformed. Unstructured. Anatomically profane.”
+
+IV. Adaptive & Mimetic Capabilities
+1. Vocal Replication (SUCCESSFUL)
+• Perfect replication of human speech after brief exposure
+• Can layer multiple vocal sources
+• Demonstrates emotional tone simulation
+• Frequently imitates distress calls, familiar voices, or personal identifiers
+Field observation indicates it learns names rapidly.
+
+2. Camouflage → Full Morphogenic Shift (UNINTENDED EVOLUTION)
+Originally designed for pigment-based camouflage via chromatophores.
+Mutation resulted in:
+• Complete somatic restructuring
+• Skeletal compression and expansion
+• Organ repositioning
+• Dermal texture alteration
+• Approximate human replication (visual only)
+Notably:
+• Mass remains constant
+• Fine biological inaccuracies detectable upon close inspection
+• Replication improves with observation duration
+The organism does not merely blend – it becomes.
+This trait exceeds original design parameters.
+
+3. Predatory Strategy
+NEMO_03 does not pursue prey physically.
+Instead, it:
+1. Observes target from concealment
+2. Mimics voice of known associate
+3. Adopts approximate physical appearance
+4. Lures prey into enclosed or low-light environment
+5. Executes rapid mandibular expansion and cervical fracture
+This behaviour mirrors anglerfish ambush logic – replacing light lure with psychological deception.
+
+4. Environmental Preference
+Rather than inheriting echolocation, NEMO_03 acquired behavioural traits from chiropteran DNA:
+• Prefers dark
+• Prefers warm
+• Prefers humid / enclosed environments
+• Avoids open, dry, well-lit terrain
+Commonly seeks:
+• Basements
+• Ventilation systems
+• Sewer infrastructure
+• Subfloor cavities
+• Attics during winter
+It becomes increasingly agitated under bright light exposure.
+
+V. Behavioural Notes
+• Displays observational intelligence
+• Demonstrates patience beyond predatory necessity
+• Has been observed mimicking staff members without immediate attack
+• Appears to “practice” forms when unobserved
+Psychological profile suggests emerging self-awareness.
+
+VI. Containment History
+• Successfully contained in Adaptive Chamber 3A for 41 days
+• Containment failure events linked to unexplained electromagnetic disturbances
+• Security footage repeatedly corrupted prior to incident
+No evidence of forced breach.
+Exit path remains unidentified.
+
+VII. Incident Report — Anomaly Crisis
+Date: 17/12/20
+Context: Facility-wide systems failure during classified anomaly event coinciding with early global outbreak reports.
+During emergency lockdown sequence:
+• Power grid destabilized
+• Biological containment fields failed
+• Surveillance blackout (7 minutes 13 seconds)
+• NEMO_03 missing upon restoration
+Last thermal signature detected near sub-basement access corridor.
+Exterior breach signs discovered hours later.
+
+VIII. Current Status
+NEMO_03 is presumed active.
+Given its:
+• Advanced mimicry
+• Form alteration ability
+• Preference for inhabited enclosed spaces
+• Capacity to replicate trusted individuals
+Risk assessment concludes:
+Direct confrontation not advised.
+Verification of identity protocols mandatory in all secure facilities.
+
+IX. Advisory Notice
+If auditory anomalies occur in isolated environments – particularly voices of known individuals requesting entry – verification must be visual and tactile under high-intensity lighting conditions.
+Do not respond to familiar voices in darkness.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const NEMO_PREVIEW_TEXT = `Project NEMO – Experimental Adaptation Initiative
+Creature File: NEMO_03
+Classification: Adaptive Mimetic Organism
+Status: ██████
+Threat Level: ██████
+
+I. Overview
+NEMO_03 is the third biological construct developed under Project NEMO…
+[REDACTED: CLEARANCE 3 REQUIRED]
+
+II. Notes
+• Audio mimicry confirmed
+• Visual replication reported
+• Containment history: ███████████
+• Last verified location: ███████████
+
+ENTER DECRYPTION KEY TO ACCESS FULL FILE.`;
+
+    const NEMO_KEY = "olssv dvysk!";
+    const NEMO_UNLOCK_STORAGE_KEY = "EEC_NEMO03_UNLOCKED";
+
+    // =============================
+    // ENTITY FILES (DEV ONLY)
+    // =============================
+    const AILENI_FILE_TEXT = `Project AILENI – Regeneration Initiative
+
+Creature File: AILENI_04
+Classification: Hyper-Regenerative Organism
+Status: TERMINATED
+Threat Level: HIGH (Pre-Termination)
+
+I. Overview
+AILENI_04 was the fourth and final subject produced under Project AILENI, an initiative focused on accelerated cellular regeneration and full limb restoration.
+Earlier subjects demonstrated uncontrolled mitotic expansion and catastrophic organ duplication. AILENI_04 incorporated refined growth inhibitors intended to regulate regenerative signaling pathways.
+Initial stabilization exceeded projections.
+
+II. Genetic Composition Summary
+Primary integrations included:
+• Axolotl – limb regeneration
+• Planarian flatworm – whole-body cellular reconstitution
+• African spiny mouse – scarless wound healing
+• Deer – antler regrowth cycle regulation
+
+III. Physical Description
+Baseline Form (Post-Stabilization):
+• Height: 1.8m
+• Musculature: Dense, fibrous, unusually elastic
+• Dermal Layer: Smooth, hypervascularized
+• Eyes: Slightly luminescent under low light
+Subdermal tissue displayed constant micro-movement consistent with active cell division.
+
+IV. Regenerative Capabilities
+1. Dermal Repair
+  o Full-thickness lacerations closed in under 12 seconds
+2. Skeletal Restoration
+  o Fractures fused within minutes
+3. Limb Regrowth
+  o Partial limb regeneration observed within 4 hours
+
+V. Failure Event
+On Day 6 post-stabilization:
+• Regeneration activated without injury stimulus
+• Redundant bone growth initiated
+• Secondary organ clusters formed
+• Ribcage expansion compromised cardiac function
+Subject expired following systemic compression failure.
+
+VI. Conclusion
+Regenerative signalling proved impossible to localize.
+AILENI_04 was terminated.
+Project AILENI suspended indefinitely.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const JULIA_FILE_TEXT = `Project JULIA – De-Aging Initiative
+
+Creature File: JULIA_01
+Classification: Chrono-Regressive Subject
+Status: SUCCESS / ESCAPED
+Threat Level: MODERATE
+
+I. Overview
+JULIA_01 represents the only confirmed success within Project JULIA, an initiative dedicated to biological age reversal through telomeric restoration and epigenetic reprogramming.
+Biological age reduced by 23.4 years without structural degradation.
+
+II. Genetic Composition Summary
+Primary integrations included:
+• Turritopsis dohrnii (biological reversion cycle)
+• Naked mole rat (cancer resistance)
+• Greenland shark (longevity markers)
+• Human stem-cell reactivation sequencing
+
+III. Physical Description
+• Apparent age reduced to early adulthood
+• Tissue elasticity restored
+• Neural responsiveness increased
+• Absence of senescent cellular markers
+No visible mutation or deformity present.
+
+IV. Observed Effects
+• Enhanced memory retention
+• Improved reflex latency
+• Elevated metabolic efficiency
+Subject requested additional exposure to treatment.
+
+V. Containment Breach
+During the 03/02/2021 anomaly event, chamber access logs indicate interior override.
+Subject missing following blackout.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const PRUDENCE_FILE_TEXT = `Project PRUDENCE – Foresight Initiative
+
+Creature File: PRUDENCE_02
+Classification: Predictive Cognition Subject
+Status: SUCCESS / ESCAPED
+Threat Level: HIGH
+
+I. Overview
+PRUDENCE_02 demonstrated confirmed anomalous predictive awareness during controlled trials.
+Average anticipation window: 3–7 minutes.
+
+II. Genetic Composition Summary
+Primary integrations:
+• Pigeon magnetoreception markers
+• Octopus neural plasticity
+• Elephant long-term memory encoding
+• Enhanced human prefrontal cortex mapping
+
+III. Behavioural Manifestations
+• Reaction to events prior to measurable stimulus
+• Accurate anticipation of equipment malfunction
+• Reported sensation of “approaching convergence”
+
+IV. Notable Record
+29/01/2021 – Subject statement:
+“The walls fall on the third.”
+Timestamp aligns with 03/02/2021 crisis.
+
+V. Status
+Chamber found open post-blackout.
+Subject absent.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const MINERVA_FILE_TEXT = `Project MINERVA – Cordyceps Integration Initiative
+
+Creature File: MINERVA_05
+Classification: Symbiotic Hybrid
+Status: UNKNOWN
+Threat Level: SEVERE
+
+I. Overview
+MINERVA_05 achieved the most stable parasitic-host integration within Project MINERVA.
+Unlike prior subjects, host cognition remained intact.
+
+II. Genetic Composition Summary
+• Ophiocordyceps fungal strain
+• Human neural host
+• Tardigrade resilience markers
+• Ant colony chemical communication traits
+
+III. Observed Capabilities
+• Elevated endurance
+• Diminished pain perception
+• Accelerated healing via fungal lattice
+• Stress-induced spore release
+Neural scans revealed dual activity patterns functioning cooperatively.
+
+IV. Pre-Crisis Activity
+02/02/2021 – Fungal neural network spike recorded.
+Electromagnetic interference noted in containment wing.
+
+V. Status
+Chamber breached internally during anomaly event.
+No remains recovered.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const TANCY_FILE_TEXT = `Project TANCY – Immortality Initiative
+
+Creature File: TANCY_01
+Classification: Cellular Persistence Prototype
+Status: INITIATIVE TERMINATED
+Threat Level: UNKNOWN
+
+I. Overview
+TANCY_01 sought to suppress apoptosis and eliminate biological death.
+Full viability testing never completed.
+
+II. Genetic Composition Summary
+• Hydra regenerative immortality genes
+• Lobster negligible senescence markers
+• Enhanced telomerase activation pathways
+
+III. Observed Effects
+• Cellular death reduced by 82%
+• Persistent damaged cells remained active
+• Progressive rigidity of tissue
+Concerns of malignant immortality halted project advancement.
+
+IV. Status
+Program terminated prior to Phase II.
+Subject archived.
+Current condition unknown following 03/02/2021.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const VOLTA_FILE_TEXT = `Project VOLTA – Electromagnetic Adaptation Initiative
+
+Creature File: VOLTA_01
+Classification: Electromagnetic Organism
+Status: SUCCESS / ESCAPED
+Threat Level: EXTREME
+
+I. Overview
+VOLTA_01 was engineered to generate and manipulate electromagnetic energy biologically.
+It remains the sole subject under Project VOLTA.
+
+II. Genetic Composition Summary
+• Electric eel – bioelectric discharge
+• Hammerhead shark – electroreception
+• Pigeon – geomagnetic navigation
+• Mantis shrimp – accelerated neural transmission
+
+III. Physical Description
+• Dermis emits faint ionized shimmer in darkness
+• Subdermal vein structures luminescent during discharge
+• Musculature visibly contracts prior to EM pulse release
+
+IV. Electromagnetic Capabilities
+1. Sustained discharge exceeding 700 volts
+2. Localized EMP-like bursts (4m radius)
+3. Interference with cameras, locks, radio signals
+4. Detection of active nervous systems
+
+V. Pre-Crisis Indicators
+28/10/2020 – First EM disturbances traced to containment wing.
+Repeated sensor corruption recorded.
+
+VI. Escape
+During 03/02/2021 blackout, chamber discovered magnetically fused from interior.
+Subject absent.
+Electromagnetic anomalies in surrounding region remain unresolved.
+
+END OF FILE
+Earth’s Enigmas Co.
+Restricted Archive Division`;
+
+    const ENTITY_FILES = {
+      "ALIENI_04": AILENI_FILE_TEXT,
+      "JULIA_01": JULIA_FILE_TEXT,
+      "PRUDENCE_02": PRUDENCE_FILE_TEXT,
+      "MINERVA_05": MINERVA_FILE_TEXT,
+      "TANCY_01": TANCY_FILE_TEXT,
+      "VOLTA_01": VOLTA_FILE_TEXT,
+    };
+
+    const WIP_FILE_TEXT = (codename) => `ENTITY FILE: ${codename}
+STATUS: WORK IN PROGRESS
+
+[DATA STREAM NOT YET INGESTED]
+[ATTACHMENTS: NONE]
+[RECOVERY: PENDING]
+
+— EEC ARCHIVE TOOLING`;
+
+    // =============================
+    // HELPERS
+    // =============================
+    function glitch(text,intensity=0.4){
+      const glyphs=["█","▓","▒","░","#","/","_"];
+      let out="";
+      const s=String(text);
+      for(let i=0;i<s.length;i++){
+        const ch=s[i];
+        if (ch === " " || ch === "\n" || ch === "\t"){ out += ch; continue; }
+        if(Math.random()<intensity && ch!=="-") out+=glyphs[Math.floor(Math.random()*glyphs.length)];
+        else out+=ch;
+      }
+      return out;
+    }
+    function fullyCorruptLabel(label){ return String(label).replace(/[^\s]/g, "█"); }
+    function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+    function stashAndClear(el){
+      if (!el) return;
+      el.dataset.full = el.textContent;
+      el.textContent = "";
+    }
+    function reveal(el){
+      if (!el) return;
+      el.classList.remove("prehide");
+    }
+
+    let SKIP_BOOT = false;
+    function hideSkipButton(){
+      const btn = document.getElementById("skipBootBtn");
+      if (btn) btn.style.display = "none";
+    }
+
+    function typeFromData(el, speed=10){
+      if (!el) return Promise.resolve();
+      const full = el.dataset.full ?? "";
+      el.textContent = "";
+
+      if (SKIP_BOOT){
+        el.textContent = full;
+        el.classList.remove("typeCursor");
+        return Promise.resolve();
+      }
+
+      el.classList.add("typeCursor");
+      return new Promise(resolve => {
+        let i=0;
+        const tick = () => {
+          if (SKIP_BOOT){
+            el.textContent = full;
+            el.classList.remove("typeCursor");
+            resolve();
+            return;
+          }
+          el.textContent += full[i] || "";
+          i++;
+          if(i >= full.length){
+            el.classList.remove("typeCursor");
+            resolve();
+            return;
+          }
+          setTimeout(tick, speed);
+        };
+        tick();
+      });
+    }
+
+    async function typeLineWithDate(dateEl, sepEl, msgEl, dateSpeed=8, msgSpeed=8){
+      await typeFromData(dateEl, dateSpeed);
+      if (sepEl) sepEl.textContent = " · ";
+      await typeFromData(msgEl, msgSpeed);
+    }
+
+    // =============================
+    // MODALS
+    // =============================
+    function setFileActions({ showEnterKey = false } = {}){
+      const actions = document.getElementById("fileActions");
+      if (!actions) return;
+      actions.setAttribute("aria-hidden", showEnterKey ? "false" : "true");
+    }
+
+    const VIDEO_SRC = "nemo.mp4";
+
+    function openNemoModal(){
+      const overlay = document.getElementById("videoModal");
+      const video = document.getElementById("nemoVideo");
+      if (!overlay || !video) return;
+
+      overlay.setAttribute("aria-hidden","false");
+
+      video.muted = false;
+      video.volume = 1;
+      if (!video.currentSrc) video.src = VIDEO_SRC;
+      try{ video.currentTime = 0; }catch(_e){}
+
+      const p = video.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    }
+
+    function closeNemoModal(){
+      const overlay = document.getElementById("videoModal");
+      const video = document.getElementById("nemoVideo");
+      if (!overlay || !video) return;
+
+      overlay.setAttribute("aria-hidden","true");
+      try{ video.pause(); }catch(_e){}
+    }
+
+    function openFileModal(title, body, { showEnterKey = false } = {}){
+      const overlay = document.getElementById("fileModal");
+      const t = document.getElementById("fileTitle");
+      const b = document.getElementById("fileBody");
+      if (!overlay || !t || !b) return;
+
+      t.textContent = title;
+      b.textContent = body;
+      setFileActions({ showEnterKey });
+      overlay.setAttribute("aria-hidden","false");
+    }
+
+    function closeFileModal(){
+      const overlay = document.getElementById("fileModal");
+      if (!overlay) return;
+      overlay.setAttribute("aria-hidden","true");
+      setFileActions({ showEnterKey:false });
+    }
+
+    // =============================
+    // NEMO UNLOCK (dev bypass)
+    // =============================
+    function isNemoUnlocked(){
+      if (isDevMode()) return true;
+      return localStorage.getItem(NEMO_UNLOCK_STORAGE_KEY) === "1";
+    }
+    function unlockNemo(){ localStorage.setItem(NEMO_UNLOCK_STORAGE_KEY, "1"); }
+    function relockNemo(){ localStorage.removeItem(NEMO_UNLOCK_STORAGE_KEY); }
+
+    function openEncryptedNemoFile(){
+      if (isNemoUnlocked()){
+        openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, { showEnterKey:false });
+        return;
+      }
+      openFileModal("NEMO_03 · RESTRICTED FILE", NEMO_PREVIEW_TEXT, { showEnterKey:true });
+    }
+
+    function revealOperatorKey(){
+      openFileModal("SYSTEM CACHE RECOVERY", [
+        "LOCAL HEADER CACHE RESTORED",
+        "—",
+        "RECOVERED CREDENTIAL:",
+        "DECRYPTION KEY: " + NEMO_KEY,
+        "—",
+        "NOTICE:",
+        "  This action has been logged.",
+      ].join("\n"), { showEnterKey:false });
+    }
+
+    // =============================
+    // STASH TEXT FOR TYPEWRITER
+    // =============================
+    const phoneEl         = document.getElementById("t_phone");
+    const directiveTitle  = document.getElementById("t_directive");
+    const directiveBody   = document.getElementById("t_console");
+    const directiveNotice = document.getElementById("t_notice");
+    const eventTitle      = document.getElementById("t_eventTitle");
+    const registryTitle   = document.getElementById("t_registryTitle");
+    const mapTitle        = document.getElementById("t_mapTitle");
+    const mapWrap         = document.getElementById("mapWrap");
+
+    stashAndClear(directiveTitle);
+    stashAndClear(directiveBody);
+    stashAndClear(directiveNotice);
+
+    if (phoneEl){
+      phoneEl.dataset.full = glitch("+1-800-772-3419", 0.5);
+      phoneEl.textContent = "";
+    }
+
+    stashAndClear(eventTitle);
+    stashAndClear(registryTitle);
+    stashAndClear(mapTitle);
+
+    const eventLogEl = document.getElementById("eventLog");
+    const eventRows = [];
+    if (eventLogEl){
+      for(const row of EVENT_LOG){
+        if(row.spacer){
+          const spacer = document.createElement("div");
+          spacer.style.height = "10px";
+          eventLogEl.appendChild(spacer);
+          continue;
+        }
+
+        if(row.alert){
+          const div = document.createElement("div");
+          div.className = "alertLine";
+          const span = document.createElement("span");
+          span.textContent = row.text;
+          stashAndClear(span);
+          div.appendChild(span);
+          eventLogEl.appendChild(div);
+          eventRows.push({type:"alert", el: span});
+          continue;
+        }
+
+        const div = document.createElement("div");
+        div.className = "logRow";
+
+        const date = document.createElement("span");
+        date.className = "logDate";
+        date.textContent = row.date;
+        stashAndClear(date);
+
+        const sep = document.createElement("span");
+        sep.textContent = "";
+
+        const msg = document.createElement("span");
+        msg.textContent = row.text;
+        stashAndClear(msg);
+
+        div.appendChild(date);
+        div.appendChild(sep);
+        div.appendChild(msg);
+        eventLogEl.appendChild(div);
+
+        eventRows.push({type:"dated", dateEl: date, sepEl: sep, msgEl: msg});
+      }
+    }
+
+    // =============================
+    // ENTITY LIST
+    // =============================
+    function getEntitiesInDevOrder(){
+      const byName = new Map(ENTITIES.map(e => [e.name, e]));
+      return DEV_ENTITY_ORDER.map(name => byName.get(name)).filter(Boolean);
+    }
+
+    function renderEntitiesWithLed(){
+      const entityList = document.getElementById("entityList");
+      if (!entityList) return;
+
+      entityList.innerHTML = "";
+      const ordered = getEntitiesInDevOrder();
+
+      ordered.forEach((e, idx) => {
+        const li = document.createElement("li");
+        li.className = "entityItem ledOn";
+        li.style.animationDelay = `${120 + idx*80}ms`;
+
+        const isNemo = e.name === "NEMO_03";
+        const dev = isDevMode();
+
+        const displayName = dev ? e.name : (isNemo ? e.name : fullyCorruptLabel(e.name));
+        const dotClass = isNemo ? "dotGreen" : "dotRed";
+
+        li.innerHTML = `
+          <div class="entityNameLine">
+            <span class="entityDot ${dotClass}" aria-hidden="true"></span>
+            <div>
+              <div><span class="entityId">${e.id}</span> · ${displayName}</div>
+              <div class="entityStatus">STATUS: ${e.status}</div>
+            </div>
+          </div>
+        `;
+
+        const clickable = dev || isNemo;
+        li.style.cursor = clickable ? "pointer" : "default";
+
+        if (clickable){
+          li.addEventListener("click", () => {
+            if (isNemo){
+              openEncryptedNemoFile();
+              return;
+            }
+            if (!dev) return;
+            const text = ENTITY_FILES[e.name] || WIP_FILE_TEXT(e.name);
+            openFileModal(`${e.name} · ENTITY FILE`, text, { showEnterKey:false });
+          });
+        }
+
+        entityList.appendChild(li);
+      });
+    }
+
+    // =============================
+    // INTRO (SVG DRAW) -> BOOT
+    // =============================
+    async function loadInlineSVG(url, { timeoutMs = 1200 } = {}){
+      const wrap = document.getElementById("introGlobeWrap");
+      if (!wrap) return null;
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+      try{
+        const res = await fetch(url, { signal: controller.signal, cache: "no-store" });
+        clearTimeout(timer);
+
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const svgText = await res.text();
+
+        wrap.innerHTML = svgText;
+
+        const svg = wrap.querySelector("svg");
+        if (!svg) return null;
+
+        // Make it responsive
+        svg.removeAttribute("width");
+        svg.removeAttribute("height");
+        svg.style.width = "100%";
+        svg.style.height = "auto";
+        svg.style.display = "block";
+
+        // Don’t let SVG internal styles hide things
+        svg.style.overflow = "visible";
+
+        return svg;
+      }catch(e){
+        clearTimeout(timer);
+        // fail silently into boot
+        return null;
+      }
+    }
+
+    async function runIntroThenBoot(){
+      const intro = document.getElementById("introOverlay");
+      const wordmark = document.querySelector(".introWordmark");
+      const typeEl = document.getElementById("introType");
+      const skip = document.getElementById("introSkip");
+
+      // If intro elements missing, just boot
+      if (!intro || !wordmark || !typeEl){
+        await runBootSequence();
+        return;
+      }
+
+      let skipped = false;
+      const endNow = async () => {
+        if (skipped) return;
+        skipped = true;
+        intro.setAttribute("aria-hidden","true");
+        await sleep(20);
+        await runBootSequence();
+      };
+
+      if (skip) skip.addEventListener("click", endNow, { once:true });
+
+      // Load your SVG file here:
+      const svg = await loadInlineSVG("EEC-logo.svg", { timeoutMs: 1400 });
+
+      // If SVG can’t be loaded, skip intro quickly (still looks intentional)
+      if (!svg){
+        await sleep(120);
+        await endNow();
+        return;
+      }
+
+      // IMPORTANT:
+      // We animate ALL stroke-capable elements. This “will work” even if your globe
+      // isn't tagged, but for PERFECT matching later you can tag globe lines with a class
+      // and change selector to: svg.querySelectorAll(".globeLine")
+      const candidates = Array.from(svg.querySelectorAll("path, line, polyline, polygon, circle, ellipse, rect"));
+
+      // Force-stroke + dash setup (inline styles override SVG internal <style>)
+      const animEls = candidates.filter(el => {
+        const tag = el.tagName.toLowerCase();
+        if (["path","line","polyline","circle","ellipse"].includes(tag)) return true;
+        // For rect/polygon, only if already fill=none
+        const fillAttr = (el.getAttribute("fill") || "").trim().toLowerCase();
+        return fillAttr === "none";
+      });
+
+      // If the SVG has NO animatable elements, just fade out and boot.
+      if (!animEls.length){
+        await sleep(180);
+        intro.setAttribute("aria-hidden","true");
+        await sleep(220);
+        await runBootSequence();
+        return;
+      }
+
+      // Start hidden by dashoffset, but still visible enough (stroke exists)
+      animEls.forEach(el => {
+        el.classList.add("eecIntroGlow");
+
+        el.style.fill = "none";
+        el.style.stroke = "rgba(232,238,247,.92)";
+        el.style.strokeWidth = "2.2";
+        el.style.strokeLinecap = "round";
+        el.style.strokeLinejoin = "round";
+        el.style.vectorEffect = "non-scaling-stroke";
+
+        try{
+          const len = el.getTotalLength();
+          const dash = Math.ceil(len + 2);
+          el.style.strokeDasharray = String(dash);
+          el.style.strokeDashoffset = String(dash);
+          el.style.opacity = ".95";
+        }catch(_e){
+          // ignore elements that can't compute length
+        }
+      });
+
+      // DRAW (shorter)
+      const DRAW_MS = 520;
+      const STAGGER_MS = 38;
+
+      animEls.forEach((el, i) => {
+        if (!el.style.strokeDashoffset) return;
+        el.style.transition = "none";
+        el.getBoundingClientRect(); // reflow
+        el.style.transition = `stroke-dashoffset ${DRAW_MS}ms ease ${i*STAGGER_MS}ms`;
+        el.style.strokeDashoffset = "0";
+      });
+
+      await sleep(DRAW_MS + (animEls.length - 1) * STAGGER_MS + 90);
+      if (skipped) return;
+
+      // Slide SVG left + reveal wordmark
+      const globeWrap = document.getElementById("introGlobeWrap");
+      if (globeWrap){
+        globeWrap.style.animation = "introSlideLeft 520ms cubic-bezier(.2,.9,.25,1) forwards";
+      }
+      wordmark.style.animation = "introWordmarkIn 420ms ease 220ms forwards";
+
+      await sleep(620);
+      if (skipped) return;
+
+      // Type the wordmark
+      const fullText = "EARTH’S ENIGMAS CO.";
+      typeEl.textContent = "";
+      typeEl.classList.add("typeCursor");
+
+      for (let i = 0; i < fullText.length; i++){
+        if (skipped) return;
+        typeEl.textContent += fullText[i];
+        await sleep(26);
+      }
+      typeEl.classList.remove("typeCursor");
+
+      // Fade intro out (short)
+      await sleep(220);
+      if (skipped) return;
+
+      intro.setAttribute("aria-hidden","true");
+      await sleep(260);
+      await runBootSequence();
+    }
+
+    // =============================
+    // BOOT SEQUENCE
+    // =============================
+    async function runBootSequence(){
+      await sleep(120);
+
+      // Skip animation
+      const skipBtn = document.getElementById("skipBootBtn");
+      if (skipBtn){
+        skipBtn.addEventListener("click", () => {
+          SKIP_BOOT = true;
+          hideSkipButton();
+        }, { once:true });
+      }
+
+      // Directive
+      reveal(directiveTitle);
+      await typeFromData(directiveTitle, 9);
+
+      reveal(directiveBody);
+      await typeFromData(directiveBody, 7);
+
+      reveal(directiveNotice);
+      await typeFromData(directiveNotice, 9);
+
+      reveal(phoneEl);
+      await typeFromData(phoneEl, 12);
+
+      // Event log
+      await sleep(110);
+      reveal(eventTitle);
+      await typeFromData(eventTitle, 9);
+
+      reveal(eventLogEl);
+      for(const row of eventRows){
+        if(row.type === "alert") await typeFromData(row.el, 8);
+        else await typeLineWithDate(row.dateEl, row.sepEl, row.msgEl, 8, 8);
+      }
+
+      // Registry title + entities
+      await sleep(140);
+      reveal(registryTitle);
+      await typeFromData(registryTitle, 9);
+      renderEntitiesWithLed();
+
+      // Map
+      await sleep(140);
+      reveal(mapTitle);
+      await typeFromData(mapTitle, 9);
+      reveal(mapWrap);
+      if (mapWrap) mapWrap.classList.add("ledOn");
+
+      // Green dot opens VIDEO
+      const nemoDot = document.getElementById("nemoDot");
+      if (nemoDot) nemoDot.addEventListener("click", openNemoModal);
+
+      // Modal handlers
+      const vClose = document.getElementById("videoClose");
+      const vOverlay = document.getElementById("videoModal");
+      if (vClose) vClose.addEventListener("click", closeNemoModal);
+      if (vOverlay) vOverlay.addEventListener("click", (e) => { if (e.target === vOverlay) closeNemoModal(); });
+
+      const fClose = document.getElementById("fileClose");
+      const fOverlay = document.getElementById("fileModal");
+      if (fClose) fClose.addEventListener("click", closeFileModal);
+      if (fOverlay) fOverlay.addEventListener("click", (e) => { if (e.target === fOverlay) closeFileModal(); });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape"){
+          closeNemoModal();
+          closeFileModal();
+        }
+      });
+
+      // Enter key button
+      const enterKeyBtn = document.getElementById("enterKeyBtn");
+      if (enterKeyBtn){
+        enterKeyBtn.addEventListener("click", () => {
+          const key = prompt("DECRYPTION KEY REQUIRED:");
+          if (key === null) return;
+
+          if (key.trim() === NEMO_KEY){
+            unlockNemo();
+            openFileModal("NEMO_03 · DECRYPTED FILE", NEMO_FILE_TEXT, { showEnterKey:false });
+          } else {
+            openFileModal("NEMO_03 · ACCESS DENIED", [
+              "CLEARANCE: FAILED",
+              "KEY STATUS: INVALID",
+              "NOTICE:",
+              "  Repeated attempts will be logged."
+            ].join("\n"), { showEnterKey:true });
+          }
+        });
+      }
+
+      // Operator key reveal (tap threshold = 3)
+      const prodLogo = document.getElementById("logoProd");
+      if (prodLogo){
+        prodLogo.addEventListener("click", (e) => {
+          if (e.shiftKey) revealOperatorKey();
+        });
+
+        let tapCount = 0;
+        let tapTimer = null;
+        const TAP_THRESHOLD = 3;
+        const TAP_WINDOW_MS = 3000;
+
+        const registerTap = () => {
+          tapCount++;
+
+          if (tapCount === 1){
+            tapTimer = setTimeout(() => {
+              tapCount = 0;
+              tapTimer = null;
+            }, TAP_WINDOW_MS);
+          }
+
+          if (tapCount >= TAP_THRESHOLD){
+            if (tapTimer) clearTimeout(tapTimer);
+            tapCount = 0;
+            tapTimer = null;
+            revealOperatorKey();
+          }
+        };
+
+        prodLogo.addEventListener("touchend", (e) => {
+          e.preventDefault();
+          registerTap();
+        }, { passive:false });
+      }
+
+      // Hide skip button once boot finishes
+      hideSkipButton();
+
+      if (isDevMode()){
+        document.title = "DEV — " + document.title;
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      runIntroThenBoot();
+    });
+  </script>
+</body>
+</html>
 
